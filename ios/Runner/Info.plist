@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>joyato</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
+	<string>joyato$(APP_ID_SUFFIX)</string>
+	<key>CFBundleDisplayName</key>
+	<string>joyato$(APP_ID_SUFFIX)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
