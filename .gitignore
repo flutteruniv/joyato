@@ -48,3 +48,6 @@ app.*.map.json
 
 # Android related
 **/android/app/src/main/res/mipmap*/
+
+# iOS/XCode related
+**/ios/Flutter/DartDefines.xcconfig
