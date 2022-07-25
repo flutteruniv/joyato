@@ -22,11 +22,18 @@ dev_dependencies:
 
 
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.9.3
 
 
 flutter:
 
   uses-material-design: true
 
-  
+assets:
+  - assets/images
+
+
+flutter_icons:
+  android: true
+  ios: true
   

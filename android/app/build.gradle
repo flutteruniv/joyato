@@ -31,6 +31,14 @@ if (project.hasProperty('dart-defines')) {
         }
 }
 
+task copySources(type: Copy) {
+    from "src/${dartEnvironmentVariables.FLAVOR}/res"
+    into 'src/main/res'
+}
+tasks.whenTaskAdded { task ->
+    task.dependsOn copySources
+}
+
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -55,8 +63,8 @@ android {
 
     defaultConfig {
         applicationId "com.pressedkonbu.joyato"
-        minSdkVersion flutter.minSdkVersion
         minSdkVersion 21
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
