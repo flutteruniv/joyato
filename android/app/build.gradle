@@ -31,11 +31,21 @@ if (project.hasProperty('dart-defines')) {
         }
 }
 
+
+task selectGoogleServicesJson(type: Copy) {
+    from "src/${dartEnvironmentVariables.FLAVOR}/google-services.json"
+    into './'
+}
+
 task copySources(type: Copy) {
     from "src/${dartEnvironmentVariables.FLAVOR}/res"
     into 'src/main/res'
 }
+
 tasks.whenTaskAdded { task ->
+    if (task.name == 'processDebugGoogleServices' || task.name == 'processReleaseGoogleServices') {
+        task.dependsOn selectGoogleServicesJson
+    }
     task.dependsOn copySources
 }
 
@@ -43,6 +53,8 @@ tasks.whenTaskAdded { task ->
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion flutter.compileSdkVersion

@@ -48,6 +48,9 @@ app.*.map.json
 
 # Android related
 **/android/app/src/main/res/mipmap*/
+**/android/app/google-services.json
+**/android/app/src/dev/google-services.json
+**/android/app/src/prod/google-services.json
 
 # iOS/XCode related
 **/ios/Flutter/DartDefines.xcconfig
