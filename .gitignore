@@ -54,3 +54,6 @@ app.*.map.json
 
 # iOS/XCode related
 **/ios/Flutter/DartDefines.xcconfig
+**/ios/GoogleService-Info.plist
+**/ios/dev/GoogleService-Info.plist
+**/ios/prod/GoogleService-Info.plist
