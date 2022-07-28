@@ -25,7 +25,7 @@ androidのdevとprodフォルダにはgoogle-services.json
 iOSのdevとprodフォルダにはGoogleService-Info.plist
 
 
-2 devとprodのビルドやり方
+2 devとprodのビルドのやり方
 
 (1) androidとiOSの方法
 
