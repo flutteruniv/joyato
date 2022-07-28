@@ -34,7 +34,7 @@ androidのシュミレーターを開きターミナルで以下のコマンド�
 - prod: flutter run --dart-define=FLAVOR=prod
 それぞれビルドできたらアイコンとアイコン名が変わっていると思われます。
 
-※ androidもiOSも共通のコマンドとやり方です。
+※ androidもiOSも共通のコマンドとやり方です
 
 
 
