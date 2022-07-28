@@ -29,7 +29,7 @@ iOSのdevとprodフォルダにはGoogleService-Info.plist
 
 (1) androidとiOSの方法
 
-androidのシュミレーターを開きターミナルで以下のコマンドを打ちます
+androidのシュミレーターを開きターミナルで以下のコマンドを打ちます。
 - dev: flutter run --dart-define=FLAVOR=dev
 - prod: flutter run --dart-define=FLAVOR=prod
 それぞれビルドできたらアイコンとアイコン名が変わっていると思われます。
