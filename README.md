@@ -11,11 +11,11 @@
  新しくチームに参加された方にビルドまでの手順を説明します。
  本プロジェクトではdevとprodの2つの開発環境を用意しています。
  それら2つの環境でiOSとAndroidのビルドができる状態にし、下記の画像のような状態を目指しましょう。
- - devアイコン名: joyato.dev
- - prodアイコン名: joyato
+ - devアプリ名: joyato.dev
+ - prodアプリ名: joyato
 
 
- ![画像の説明](assets/images/iOS.png)
+ ![画像の説明](assets/images/ios.png)
  *iOS*
  ![画像の説明](assets/images/android.png)
  *android*  
