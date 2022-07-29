@@ -4,7 +4,7 @@
 <br>
 
 ## はじめに  
------
+
 
 <br>
 
@@ -23,7 +23,7 @@
 
 
 ## Firebase設定ファイルの適用
------
+
 Firebaseの設定ファイルをダウンロードするためにjoyato-devとjoyato-prodプロジェクトに参加する必要があります。
 
 - [joyato-dev](https://console.firebase.google.com/project/joyato-dev/overview?hl=ja)
