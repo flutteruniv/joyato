@@ -3,12 +3,50 @@
 * devとprodを環境ごとにbuildする  
 <br>
 
+## はじめに  
+-----
+
+<br>
+
+ 新しくチームに参加された方にビルドまでの手順を説明します。
+ 本プロジェクトではdevとprodの2つの開発環境を用意しています。
+ それら2つの環境でiOSとAndroidのビルドができる状態にし、下記の画像のような状態を目指しましょう。
+ - devアイコン名: joyato.dev
+ - prodアイコン名: joyato
+
+
+ ![画像の説明](assets/images/iOS.png)
+ *iOS*
+ ![画像の説明](assets/images/android.png)
+ *android*  
+ <br>
+
+
+## Firebase設定ファイルの適用
+-----
+Firebaseの設定ファイルをダウンロードするためにjoyato-devとjoyato-prodプロジェクトに参加する必要があります。
+
+- [joyato-dev](https://console.firebase.google.com/project/joyato-dev/overview?hl=ja)
+- [joyato-prod](https://console.firebase.google.com/project/joyato-prod/overview?hl=ja)  
+<br>
+
+上記の2つのプロジェクトの閲覧権限がない場合はこんぶさんにDMしプロジェクトに招待してもらいましょう。  
+<br>
+
+
+
+
+
+
+
 ### *1 firebaseの設定ファイルandroidとiOSそれぞれダウンロードしフォルダに格納する*
 -----  
 <br>
 
-1. firebaseコンソールに移動しjoyato-devとjoyato-prodのプロジェクトがあるか確認してください。  
+1. firebaseコンソールに移動しjoyato-devとjoyato-prodのプロジェクトがあるか確認してください。 
 2. 確認ができましたらdevとprodどちらからでも良いのでプロジェクトを開いてください。
+
+
 <br>
 
     ※今回の説明ではdevを使用します。  
