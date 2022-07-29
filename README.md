@@ -75,7 +75,29 @@ Firebaseの設定ファイルをダウンロードするためにjoyato-devとjo
 
 - androidもiOSをやり方は共通です!  
   - androidのdevとprodフォルダにはgoogle-services.json  
-  - iOSのdevとprodフォルダにはGoogleService-Info.plist
+  - iOSのdevとprodフォルダにはGoogleService-Info.plist  
+  <br>
+
+
+
+### *2 devとprodのビルドのやり方*
+-----  
+<br>
+
+1. androidのシュミレーターを開きターミナルで以下のコマンドを打ちます。
+- dev: flutter run --dart-define=FLAVOR=dev
+- dev: flutter run --dart-define=FLAVOR=prod  
+<br>
+
+
+それぞれビルドできたらアイコンとアプリ名が変わっていると思われます。
+androidもiOSも共通のコマンドとやり方です。
+
+
+
+
+
+
 
 
 
