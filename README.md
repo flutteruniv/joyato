@@ -15,9 +15,9 @@
  - prodアプリ名: joyato
 
 
- ![画像の説明](assets/images/ios.png)
+ ![画像の説明](assets/images/ios_icon.png)
  *iOS*
- ![画像の説明](assets/images/android.png)
+ ![画像の説明](assets/images/android_icon.png)
  *android*  
  <br>
 
