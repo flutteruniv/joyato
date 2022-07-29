@@ -84,7 +84,7 @@ Firebaseの設定ファイルをダウンロードするためにjoyato-devとjo
 -----  
 <br>
 
-1. androidのシュミレーターを開きターミナルで以下のコマンドを打ちます。
+1. シュミレーターを開きターミナルで以下のコマンドを打ちます。
 - dev: flutter run --dart-define=FLAVOR=dev
 - dev: flutter run --dart-define=FLAVOR=prod  
 <br>
