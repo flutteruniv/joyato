@@ -1,2 +1,4 @@
 FLAVOR=prod
 APP_ID_SUFFIX=
+GOOGLE_INFO_URL=com.googleusercontent.apps.785557107114-tu5677lnu5ln1fhlmhs8jc2vnlksugml
+
