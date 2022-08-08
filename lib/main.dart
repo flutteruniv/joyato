@@ -1,5 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:joyato/Signin_page.dart';
+import 'package:joyato/home_page.dart';
+
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,35 +19,18 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('常夜灯'),
-      ),
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return const MaterialApp(
+        home: SignInPage(),
+      );
+    }
+    return const MaterialApp(
+      home: HomePage(),
     );
   }
 }

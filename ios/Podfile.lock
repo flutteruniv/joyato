@@ -1,6 +1,15 @@
 PODS:
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - Firebase/Analytics (9.3.0):
     - Firebase/Core
+  - Firebase/Auth (9.3.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 9.3.0)
   - Firebase/Core (9.3.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (~> 9.3.0)
@@ -8,6 +17,10 @@ PODS:
     - FirebaseCore (= 9.3.0)
   - firebase_analytics (9.3.0):
     - Firebase/Analytics (= 9.3.0)
+    - firebase_core
+    - Flutter
+  - firebase_auth (3.6.1):
+    - Firebase/Auth (= 9.3.0)
     - firebase_core
     - Flutter
   - firebase_core (1.20.0):
@@ -31,6 +44,11 @@ PODS:
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseAuth (9.3.0):
+    - FirebaseCore (~> 9.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.7)
   - FirebaseCore (9.3.0):
     - FirebaseCoreDiagnostics (~> 9.0)
     - FirebaseCoreInternal (~> 9.0)
@@ -49,6 +67,9 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (~> 2.1)
   - Flutter (1.0.0)
+  - google_sign_in_ios (0.0.1):
+    - Flutter
+    - GoogleSignIn (~> 6.2)
   - GoogleAppMeasurement (9.3.0):
     - GoogleAppMeasurement/AdIdSupport (= 9.3.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -73,6 +94,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleSignIn (6.2.2):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
+    - GTMSessionFetcher/Core (~> 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -92,6 +117,10 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
+  - GTMAppAuth (1.3.0):
+    - AppAuth/Core (~> 1.4)
+    - GTMSessionFetcher/Core (~> 1.5)
+  - GTMSessionFetcher/Core (1.7.2)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -101,47 +130,65 @@ PODS:
 
 DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
+  - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
+  - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - Firebase
     - FirebaseAnalytics
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCoreInternal
     - FirebaseInstallations
     - GoogleAppMeasurement
     - GoogleDataTransport
+    - GoogleSignIn
     - GoogleUtilities
+    - GTMAppAuth
+    - GTMSessionFetcher
     - nanopb
     - PromisesObjC
 
 EXTERNAL SOURCES:
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
+  firebase_auth:
+    :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  google_sign_in_ios:
+    :path: ".symlinks/plugins/google_sign_in_ios/ios"
 
 SPEC CHECKSUMS:
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
   firebase_analytics: 8f772ccb3dad1e8968019a158823f99e63069d2b
+  firebase_auth: e83a8e15aeac85f05ca17c241cff4bd20e5d8c17
   firebase_core: 96214f90497b808a2cf2a24517084c5f6de37b53
   FirebaseAnalytics: bf46f5163f44097ce2c789de0b3e6f87f1da834a
+  FirebaseAuth: 9ebc3577fe0acf9092df21ac314024b70aebf21e
   FirebaseCore: c088995ece701a021a48a1348ea0174877de2a6a
   FirebaseCoreDiagnostics: 060eb57cc56dfaf40b1b1b5874a5c17c41ce79f8
   FirebaseCoreInternal: 635d1c9a612a6502b6377a0c92af83758076ffff
   FirebaseInstallations: 54b40022cb06e462740c9f2b9fbe38b5e78a825a
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  google_sign_in_ios: 4f85eb9f937450765c8573bb85fd8cd6a5af675c
   GoogleAppMeasurement: b907bdad775b6975a8108762345b2cfbf1a93c37
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleSignIn: 3c68388ac221f379676e8f1cb115df3aaf73b93f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
 
-PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
+PODFILE CHECKSUM: 0bc77384ed5df2a4c1185123586d2e455be9f3a5
 
 COCOAPODS: 1.11.3
