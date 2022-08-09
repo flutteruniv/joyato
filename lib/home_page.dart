@@ -34,28 +34,25 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              onPressed:
-              () async {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                );
-                await singOut();
-                if (!mounted) {
-                  return;
-                }
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) {
-                    return const SignInPage();
-                  }),
-                  (route) => false,
-                );
-              };
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              );
+              await singOut();
+              if (!mounted) {
+                return;
+              }
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) {
+                  return const SignInPage();
+                }),
+                (route) => false,
+              );
             },
           )
         ],

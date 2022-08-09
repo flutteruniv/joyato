@@ -5,12 +5,13 @@ import GoogleMaps
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
+    let mapAPIKey = Bundle.main.object(forInfoDictionaryKey: "MapAPIKey") as! String
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyAYlLHVrFih6JEkXU408sHkIuxRaJNdWVk")
+    GMSServices.provideAPIKey(mapAPIKey)
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
