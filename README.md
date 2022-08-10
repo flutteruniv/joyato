@@ -98,7 +98,7 @@ androidもiOSも共通のコマンドとやり方です。
 1. project配下に「map_api_key.env」という名前でファイルを生成してください。
 2. 生成したファイルに`MAP_API_KEY=使用するAPI-KEY`の形式で記載してください。
 ![API-KEY1](https://user-images.githubusercontent.com/102897585/183320130-b25ca973-9387-4c51-8476-ef6ee64912e9.png)
-3. 次にsample_google_maps_flutter/android/app/src/main/res/values/の配下に「keys.xml」という名前でファイルを生成してください。
+3. 次に/android/app/src/main/res/values/の配下に「keys.xml」という名前でファイルを生成してください。
 4. 下記の<string...string>の間に使用するAPI-KEYを記載してください。
 ```
 <?xml version="1.0" encoding="utf-8"?>
