@@ -12,8 +12,6 @@ class MyApp extends StatelessWidget {
     // TODO(kenta-wakasa): SingInPageとHomePageの出し分けをgo_routerを用いた方法に変更したい
     final currentUser = FirebaseAuth.instance.currentUser;
     final home = currentUser == null ? const SignInPage() : const HomePage();
-    return MaterialApp(
-      home: home,
-    );
+    return MaterialApp(home: home);
   }
 }
