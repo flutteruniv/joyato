@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'auth.dart';
+import '../auth.dart';
 import 'sign_in_page.dart';
 
 class HomePage extends StatefulWidget {

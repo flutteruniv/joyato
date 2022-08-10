@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'auth.dart';
+import '../auth.dart';
 import 'home_page.dart';
 
 class SignInPage extends StatefulWidget {
