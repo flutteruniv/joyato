@@ -93,6 +93,26 @@ Firebaseの設定ファイルをダウンロードするためにjoyato-devとjo
 それぞれビルドできたらアイコンとアプリ名が変わっていると思われます。
 androidもiOSも共通のコマンドとやり方です。
 
+----
+## API-KEY設定
+1. project配下に「map_api_key.env」という名前でファイルを生成してください。
+2. 生成したファイルに`MAP_API_KEY=使用するAPI-KEY`の形式で記載してください。
+![API-KEY1](https://user-images.githubusercontent.com/102897585/183320130-b25ca973-9387-4c51-8476-ef6ee64912e9.png)
+3. 次にsample_google_maps_flutter/android/app/src/main/res/values/の配下に「keys.xml」という名前でファイルを生成してください。
+4. 下記の<string...string>の間に使用するAPI-KEYを記載してください。
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="google_maps_key" translatable="false"    templateMergeStrategy="preserve">
+        
+    </string>
+</resources>
+```
+![API-KEY2](https://user-images.githubusercontent.com/102897585/183526980-07bafee2-b991-4366-aa72-8788f9934e3c.png)
+
+※iOSの読み込みが不具合の場合、[こちらの記事](https://www.rect-angle.com/tech/flutter/flutter-env/)を参照しビルドスクリプトが正しく動作しているかを確認してください。
+
+※Androidの読み込みが不具合の場合、[こちらの記事](https://medium.com/@ykaito21/flutter-from-zero-to-one-how-to-ignore-google-map-api-key-from-source-control-18e119ff5a47)を参照し、keys.xmlが生成されているか確認してください。
 
 
 
