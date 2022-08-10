@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:joyato/SignIn_page.dart';
+
+import 'auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,11 +21,6 @@ class _HomePageState extends State<HomePage> {
   static const double minZoomLevel = 6;
   late final _initPosition = CameraPosition(target: initLatLng, zoom: 14.0);
 
-  Future<void> singOut() async {
-    await GoogleSignIn().signOut();
-    await FirebaseAuth.instance.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('ホームページ'),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
               showDialog(
                 context: context,
@@ -61,7 +56,8 @@ class _HomePageState extends State<HomePage> {
         mapType: MapType.terrain,
         initialCameraPosition: _initPosition,
         markers: _markers,
-        minMaxZoomPreference: MinMaxZoomPreference(minZoomLevel, maxZoomLevel),
+        minMaxZoomPreference:
+            const MinMaxZoomPreference(minZoomLevel, maxZoomLevel),
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
         onMapCreated: (GoogleMapController controller) {
