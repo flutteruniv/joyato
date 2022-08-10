@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:joyato/home_page.dart';
 
 import 'auth.dart';
+import 'home_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -20,19 +22,21 @@ class _SignInPageState extends State<SignInPage> {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+            unawaited(
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             );
             await signInWithGoogle();
             if (!mounted) {
               return;
             }
-            Navigator.of(context).pushAndRemoveUntil(
+            await Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) {
                 return const HomePage();
               }),

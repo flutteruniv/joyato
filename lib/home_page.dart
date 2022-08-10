@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:joyato/SignIn_page.dart';
+import 'package:joyato/sign_in_page.dart';
 
 import 'auth.dart';
 
