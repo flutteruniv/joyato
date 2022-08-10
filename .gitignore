@@ -57,3 +57,7 @@ app.*.map.json
 **/ios/GoogleService-Info.plist
 **/ios/dev/GoogleService-Info.plist
 **/ios/prod/GoogleService-Info.plist
+
+# API-KEY
+map_api_key.env
+keys.xml

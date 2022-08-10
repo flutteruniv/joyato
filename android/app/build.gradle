@@ -76,7 +76,8 @@ android {
     defaultConfig {
         applicationId "com.pressedkonbu.joyato"
         minSdkVersion flutter.minSdkVersion
-        minSdkVersion 19
+        minSdkVersion 20
+        multiDexEnabled true
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
