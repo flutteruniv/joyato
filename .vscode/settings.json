@@ -1,5 +1,13 @@
 {
     "cSpell.words": [
         "xcconfig"
-    ]
+    ],
+    "dart.lineLength": 80,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.organizeImports": true,
+        "source.addMissingImports": true,
+        "source.fixAll.eslint": true
+     },
+     "dartImport.fixOnSave": true
 }
