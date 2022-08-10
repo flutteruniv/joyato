@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:joyato/sign_in_page.dart';
 
 import 'auth.dart';
+import 'sign_in_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,12 +14,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /// zoomレベルの最小値・最大値
+  static const _maxZoomLevel = 18.0;
+  static const _minZoomLevel = 6.0;
+  static const _miMinMaxZoomPreference = MinMaxZoomPreference(
+    _minZoomLevel,
+    _maxZoomLevel,
+  );
+
+  /// 初期配置
+  static const _initLatLng = LatLng(35.675, 139.770);
+  static const _initPosition = CameraPosition(target: _initLatLng, zoom: 14.0);
+
   final _controller = Completer<GoogleMapController>();
   final _markers = <Marker>{};
-  final initLatLng = const LatLng(35.675, 139.770);
-  static const double maxZoomLevel = 18;
-  static const double minZoomLevel = 6;
-  late final _initPosition = CameraPosition(target: initLatLng, zoom: 14.0);
+
+  /// サインアウト後に [SignInPage] に遷移する
+  Future<void> signOut() async {
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+    await singOut();
+    if (!mounted) {
+      return;
+    }
+    await Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) {
+        return const SignInPage();
+      }),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +61,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              );
-              await singOut();
-              if (!mounted) {
-                return;
-              }
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) {
-                  return const SignInPage();
-                }),
-                (route) => false,
-              );
-            },
+            onPressed: () => signOut(),
           )
         ],
       ),
@@ -56,11 +69,10 @@ class _HomePageState extends State<HomePage> {
         mapType: MapType.terrain,
         initialCameraPosition: _initPosition,
         markers: _markers,
-        minMaxZoomPreference:
-            const MinMaxZoomPreference(minZoomLevel, maxZoomLevel),
+        minMaxZoomPreference: _miMinMaxZoomPreference,
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
-        onMapCreated: (GoogleMapController controller) {
+        onMapCreated: (controller) {
           _controller.complete(controller);
         },
       ),
