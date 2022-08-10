@@ -17,8 +17,8 @@ class _HomePageState extends State<HomePage> {
   final _controller = Completer<GoogleMapController>();
   final _markers = <Marker>{};
   final initLatLng = const LatLng(35.675, 139.770);
-  final double maxZoomLevel = 18;
-  final double minZoomLevel = 6;
+  static const double maxZoomLevel = 18;
+  static const double minZoomLevel = 6;
   late final _initPosition = CameraPosition(target: initLatLng, zoom: 14.0);
 
   Future<void> singOut() async {
