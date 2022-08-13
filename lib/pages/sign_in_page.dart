@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth.dart';
+import '../storage.dart';
 import 'home_page.dart';
 
 class SignInPage extends StatefulWidget {
@@ -32,7 +34,10 @@ class _SignInPageState extends State<SignInPage> {
                 },
               ),
             );
-            await signInWithGoogle();
+            final userCredential = await signInWithGoogle();
+            final countProvider =
+                StateProvider((ref) => userCredential.user!.uid);
+            await storeUserData(userCredential);
             if (!mounted) {
               return;
             }

@@ -1,0 +1,29 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; //これがないと型解決できない
+
+part 'User.freezed.dart';
+
+@freezed
+class User with _$User {
+  const User._(); // メソッドを追加するので、コンストラクタを追加
+  const factory User({
+    required String name,
+    required String photoURL,
+    @TimestampConverter() DateTime? joined,
+    required int coin,
+  }) = _User;
+
+  void greetWithName() {
+    print('Hello, My name is $name');
+  }
+}
+
+class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
+  const TimestampConverter();
+
+  @override
+  DateTime fromJson(Timestamp json) => json.toDate();
+
+  @override
+  Timestamp toJson(DateTime object) => Timestamp.fromDate(object);
+}
