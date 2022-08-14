@@ -10,7 +10,7 @@ class Account with _$Account {
   const factory Account({
     required String name,
     required String photoURL,
-    @AutoTimestampConverter() DateTime? joined,
+    @AutoTimestampConverter() DateTime? createdAt,
     @Default(0) coin,
   }) = _Account;
   factory Account.fromJson(Map<String, dynamic> json) =>

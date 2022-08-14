@@ -23,7 +23,7 @@ mixin _$Account {
   String get name => throw _privateConstructorUsedError;
   String get photoURL => throw _privateConstructorUsedError;
   @AutoTimestampConverter()
-  DateTime? get joined => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
   dynamic get coin => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +38,7 @@ abstract class $AccountCopyWith<$Res> {
   $Res call(
       {String name,
       String photoURL,
-      @AutoTimestampConverter() DateTime? joined,
+      @AutoTimestampConverter() DateTime? createdAt,
       dynamic coin});
 }
 
@@ -54,7 +54,7 @@ class _$AccountCopyWithImpl<$Res> implements $AccountCopyWith<$Res> {
   $Res call({
     Object? name = freezed,
     Object? photoURL = freezed,
-    Object? joined = freezed,
+    Object? createdAt = freezed,
     Object? coin = freezed,
   }) {
     return _then(_value.copyWith(
@@ -66,9 +66,9 @@ class _$AccountCopyWithImpl<$Res> implements $AccountCopyWith<$Res> {
           ? _value.photoURL
           : photoURL // ignore: cast_nullable_to_non_nullable
               as String,
-      joined: joined == freezed
-          ? _value.joined
-          : joined // ignore: cast_nullable_to_non_nullable
+      createdAt: createdAt == freezed
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       coin: coin == freezed
           ? _value.coin
@@ -87,7 +87,7 @@ abstract class _$$_AccountCopyWith<$Res> implements $AccountCopyWith<$Res> {
   $Res call(
       {String name,
       String photoURL,
-      @AutoTimestampConverter() DateTime? joined,
+      @AutoTimestampConverter() DateTime? createdAt,
       dynamic coin});
 }
 
@@ -104,7 +104,7 @@ class __$$_AccountCopyWithImpl<$Res> extends _$AccountCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? photoURL = freezed,
-    Object? joined = freezed,
+    Object? createdAt = freezed,
     Object? coin = freezed,
   }) {
     return _then(_$_Account(
@@ -116,9 +116,9 @@ class __$$_AccountCopyWithImpl<$Res> extends _$AccountCopyWithImpl<$Res>
           ? _value.photoURL
           : photoURL // ignore: cast_nullable_to_non_nullable
               as String,
-      joined: joined == freezed
-          ? _value.joined
-          : joined // ignore: cast_nullable_to_non_nullable
+      createdAt: createdAt == freezed
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
       coin: coin == freezed ? _value.coin : coin,
     ));
@@ -131,7 +131,7 @@ class _$_Account extends _Account {
   const _$_Account(
       {required this.name,
       required this.photoURL,
-      @AutoTimestampConverter() this.joined,
+      @AutoTimestampConverter() this.createdAt,
       this.coin = 0})
       : super._();
 
@@ -144,14 +144,14 @@ class _$_Account extends _Account {
   final String photoURL;
   @override
   @AutoTimestampConverter()
-  final DateTime? joined;
+  final DateTime? createdAt;
   @override
   @JsonKey()
   final dynamic coin;
 
   @override
   String toString() {
-    return 'Account(name: $name, photoURL: $photoURL, joined: $joined, coin: $coin)';
+    return 'Account(name: $name, photoURL: $photoURL, createdAt: $createdAt, coin: $coin)';
   }
 
   @override
@@ -161,7 +161,7 @@ class _$_Account extends _Account {
             other is _$_Account &&
             const DeepCollectionEquality().equals(other.name, name) &&
             const DeepCollectionEquality().equals(other.photoURL, photoURL) &&
-            const DeepCollectionEquality().equals(other.joined, joined) &&
+            const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
             const DeepCollectionEquality().equals(other.coin, coin));
   }
 
@@ -171,7 +171,7 @@ class _$_Account extends _Account {
       runtimeType,
       const DeepCollectionEquality().hash(name),
       const DeepCollectionEquality().hash(photoURL),
-      const DeepCollectionEquality().hash(joined),
+      const DeepCollectionEquality().hash(createdAt),
       const DeepCollectionEquality().hash(coin));
 
   @JsonKey(ignore: true)
@@ -191,7 +191,7 @@ abstract class _Account extends Account {
   const factory _Account(
       {required final String name,
       required final String photoURL,
-      @AutoTimestampConverter() final DateTime? joined,
+      @AutoTimestampConverter() final DateTime? createdAt,
       final dynamic coin}) = _$_Account;
   const _Account._() : super._();
 
@@ -203,7 +203,7 @@ abstract class _Account extends Account {
   String get photoURL;
   @override
   @AutoTimestampConverter()
-  DateTime? get joined;
+  DateTime? get createdAt;
   @override
   dynamic get coin;
   @override

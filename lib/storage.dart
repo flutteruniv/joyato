@@ -29,7 +29,7 @@ Future<Object?> storeUserData(UserCredential userCredential) async {
 
   final account = Account(
     name: displayName!,
-    joined: null,
+    createdAt: null,
     photoURL: photoURL!,
   );
   await userDocRef.set(
