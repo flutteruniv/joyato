@@ -7,16 +7,11 @@ import '../auth.dart';
 import '../storage.dart';
 import 'home_page.dart';
 
-class SignInPage extends StatefulWidget {
+class SignInPage extends ConsumerWidget {
   const SignInPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
-}
-
-class _SignInPageState extends State<SignInPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('サインイン'),
@@ -35,12 +30,9 @@ class _SignInPageState extends State<SignInPage> {
               ),
             );
             final userCredential = await signInWithGoogle();
-            final countProvider =
-                StateProvider((ref) => userCredential.user!.uid);
-            await storeUserData(userCredential);
-            if (!mounted) {
-              return;
-            }
+
+            await checkDocuments(userCredential);
+
             await Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) {
                 return const HomePage();

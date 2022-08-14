@@ -20,10 +20,6 @@ class Account with _$Account {
     final data = ds.data()! as Map<String, dynamic>;
     return Account.fromJson(data);
   }
-
-  void greetWithName() {
-    print('Hello, My name is $name');
-  }
 }
 
 /// Firestore ドキュメントには FieldValue.serverTimestamp() を、
