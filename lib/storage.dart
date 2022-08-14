@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'pages/account.dart';
+import 'domain/account.dart';
 
 const String accounts = 'accounts';
 
