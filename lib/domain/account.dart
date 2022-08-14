@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; //これがないと型解決できない
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../json_converters.dart';
+
 part 'account.freezed.dart';
 part 'account.g.dart';
 
@@ -20,26 +22,4 @@ class Account with _$Account {
     final data = ds.data()! as Map<String, dynamic>;
     return Account.fromJson(data);
   }
-}
-
-/// Firestore ドキュメントには FieldValue.serverTimestamp() を、
-/// Dart のインスタンスとしては DateTime を与える。
-/// タイムスタンプのコンバータ。
-class AutoTimestampConverter implements JsonConverter<DateTime?, dynamic> {
-  const AutoTimestampConverter();
-
-  @override
-  DateTime? fromJson(dynamic json) {
-    if (json is Timestamp) {
-      return json.toDate();
-    }
-    return null;
-  }
-
-  /// toJson、つまり、書き込みのためにインスタンスを生成してドキュメント化する時は
-  /// TimestampConverter のフィールドは FieldValue.serverTimestamp() に自動で置換する。
-  @override
-  dynamic toJson(DateTime? object) => object == null
-      ? FieldValue.serverTimestamp()
-      : Timestamp.fromDate(object);
 }

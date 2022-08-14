@@ -1,19 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../auth.dart';
 import 'sign_in_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   /// zoomレベルの最小値・最大値
   static const _maxZoomLevel = 18.0;
   static const _minZoomLevel = 6.0;
@@ -29,6 +30,8 @@ class _HomePageState extends State<HomePage> {
   final _controller = Completer<GoogleMapController>();
   final _markers = <Marker>{};
 
+  late final authRepository = ref.read(authRepositoryProvider);
+
   /// サインアウト後に [SignInPage] に遷移する
   Future<void> signOut() async {
     unawaited(
@@ -41,16 +44,11 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
-    await singOut();
+    await authRepository.singOut();
     if (!mounted) {
       return;
     }
-    await Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) {
-        return const SignInPage();
-      }),
-      (route) => false,
-    );
+    Navigator.of(context).pop();
   }
 
   @override
