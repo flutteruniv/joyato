@@ -5,13 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth.dart';
 import '../storage.dart';
-import 'home_page.dart';
 
 class SignInPage extends ConsumerWidget {
   const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authRepository = ref.read(authRepositoryProvider);
+    final accountRepository = ref.read(accountRepositoryProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('サインイン'),
@@ -19,6 +21,8 @@ class SignInPage extends ConsumerWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
+            final navigator = Navigator.of(context);
+
             unawaited(
               showDialog(
                 context: context,
@@ -29,16 +33,9 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            final userCredential = await signInWithGoogle();
-
-            await checkDocuments(userCredential);
-
-            await Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) {
-                return const HomePage();
-              }),
-              (route) => false,
-            );
+            final userCredential = await authRepository.signInWithGoogle();
+            await accountRepository.checkDocuments(userCredential);
+            navigator.pop();
           },
           child: const Text('Googleサインイン'),
         ),
