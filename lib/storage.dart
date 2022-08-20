@@ -6,13 +6,13 @@ import 'domain/account.dart';
 
 const String accounts = 'accounts';
 
+/// FireStoreインスタンスをプロバイドする Provider
 final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
+/// AccountRepositoryをプロバイドする Provider
 final accountRepositoryProvider = Provider((ref) {
   return AccountRepository(ref.read);
 });
-
-
 
 class AccountRepository {
   AccountRepository(this._read);
@@ -24,8 +24,8 @@ class AccountRepository {
       fromFirestore: (ds, _) => Account.fromDocumentSnapshot(ds),
       toFirestore: (account, _) => account.toJson());
 
-/// Documentsが格納されているか確認し関数を分岐して実行する
-  Future<Object?> checkDocuments(UserCredential userCredential) async {
+  /// Documentsが格納されているか確認し関数を分岐して実行する
+  Future<Account?> checkDocuments(UserCredential userCredential) async {
     final uid = userCredential.user!.uid;
     final document = await fetchByUid(uid);
 
@@ -33,17 +33,18 @@ class AccountRepository {
     if (document != null) {
       return document;
     }
+
     /// Nullの場合は格納する関数を実行し戻り値を返す
-    final storedDocument = await storeUserData(userCredential);
+    final storedDocument = await storeAccountData(userCredential);
     return storedDocument;
   }
 
   /// userDataを「accounts」コレクションに格納する関数
-  Future<Object?> storeUserData(UserCredential userCredential) async {
+  Future<Account?> storeAccountData(UserCredential userCredential) async {
     final uid = userCredential.user!.uid;
     final photoURL = userCredential.user!.photoURL;
     final displayName = userCredential.user!.displayName;
-    final userDocRef = accountConverter.doc(uid);
+    final accountDocRef = accountConverter.doc(uid);
 
     final account = Account(
       name: displayName!,
@@ -51,16 +52,15 @@ class AccountRepository {
       photoURL: photoURL!,
     );
 
-    await userDocRef.set(account);
-    // 格納後にSnapShotを返す
+    await accountDocRef.set(account);
+
     final returnSnapshot = await fetchByUid(uid);
     return returnSnapshot;
   }
 
-  // 仮引数で受け取ったuidを使い、DocumentSnapshotを返す関数
-  Future<Map<String, dynamic>?> fetchByUid(String uid) async {
-    final docSnapshot =
-        await FirebaseFirestore.instance.collection(accounts).doc(uid).get();
+  /// 仮引数で受け取ったuidを使い、DocumentSnapshotを返す関数
+  Future<Account?> fetchByUid(String uid) async {
+    final docSnapshot = await accountConverter.doc(uid).get();
     return docSnapshot.data();
   }
 }
