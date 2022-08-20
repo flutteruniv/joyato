@@ -1,20 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth.dart';
-import 'home_page.dart';
+import '../storage.dart';
 
-class SignInPage extends StatefulWidget {
+class SignInPage extends ConsumerWidget {
   const SignInPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authRepository = ref.read(authRepositoryProvider);
+    final accountRepository = ref.read(accountRepositoryProvider);
 
-class _SignInPageState extends State<SignInPage> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('サインイン'),
@@ -22,6 +21,8 @@ class _SignInPageState extends State<SignInPage> {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
+            final navigator = Navigator.of(context);
+
             unawaited(
               showDialog(
                 context: context,
@@ -32,16 +33,9 @@ class _SignInPageState extends State<SignInPage> {
                 },
               ),
             );
-            await signInWithGoogle();
-            if (!mounted) {
-              return;
-            }
-            await Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) {
-                return const HomePage();
-              }),
-              (route) => false,
-            );
+            final userCredential = await authRepository.signInWithGoogle();
+            await accountRepository.checkDocuments(userCredential);
+            navigator.pop();
           },
           child: const Text('Googleサインイン'),
         ),
