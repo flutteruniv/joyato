@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   cupertino_icons: ^1.0.2
   firebase_core: ^1.20.0
   firebase_analytics: ^9.3.0
@@ -22,14 +21,15 @@ dependencies:
   flutter_riverpod: ^1.0.4
   freezed_annotation: ^2.1.0
   cloud_firestore: ^3.4.4
+  geoflutterfire:
+    git:
+      url: https://github.com/samuraituru/GeoFlutterFire.git
   
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
   flutter_launcher_icons: ^0.9.3
   freezed: ^2.1.0+1
   build_runner: ^2.2.0
