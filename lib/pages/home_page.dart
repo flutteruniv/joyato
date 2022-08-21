@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../auth.dart';
+import 'post_page.dart';
 import 'sign_in_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -88,18 +89,29 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// CanvasMarkerを作成する関数
   Future<void> canvasMarkerCreate(LatLng latLng) async {
     /// 初期Canvasサイズ
-    final markerIcon = await getBytesFromCanvas(50, 50);
+    final markerIcon = await getBytesFromCanvas(100, 100);
+    const infoWindow = InfoWindow(
+        //title: '投稿する',
+        //onTap: writeToPin(),
+        );
 
-    final initMarker = Marker(
+    final marker = Marker(
+      infoWindow: infoWindow,
       markerId: MarkerId(latLng.toString()),
       icon: BitmapDescriptor.fromBytes(markerIcon),
       position: latLng,
-      //onTap: () => onTapCanvasCallBack(latLng),
+      //onTap: () => print('👺tapされた'),
+      onTap: () => writeToPin(),
     );
 
     setState(() {
-      _markers.add(initMarker);
+      _markers.add(marker);
     });
+  }
+
+  void writeToPin() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const PostPage()));
   }
 }
 
