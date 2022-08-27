@@ -33,8 +33,8 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            final userCredential = await authRepository.signInWithGoogle();
-            await accountRepository.checkDocuments(userCredential);
+            await authRepository.signInWithGoogle();
+            await accountRepository.storeAccountData();
             navigator.pop();
           },
           child: const Text('Googleサインイン'),

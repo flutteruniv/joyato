@@ -35,6 +35,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   late final authRepository = ref.read(authRepositoryProvider);
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   /// サインアウト後に [SignInPage] に遷移する
   Future<void> signOut() async {
     final navigator = Navigator.of(context);
@@ -77,8 +82,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         onMapCreated: (controller) {
           _controller.complete(controller);
         },
-
-        /// onTap時に [canvasMarkerCreate] を実行する
         onTap: (latLng) async {
           await canvasMarkerCreate(latLng);
         },
@@ -111,7 +114,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void writeToPin() {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const PostPage()));
+        .push(MaterialPageRoute(builder: (context) => const PostingPage()));
   }
 }
 

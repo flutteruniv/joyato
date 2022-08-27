@@ -1,66 +1,68 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'auth.dart';
 import 'domain/account.dart';
 
 const String accounts = 'accounts';
+const String posts = 'posts';
 
 /// FireStoreインスタンスをプロバイドする Provider
-final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
+final _firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
 /// AccountRepositoryをプロバイドする Provider
 final accountRepositoryProvider = Provider((ref) {
-  return AccountRepository(ref.read);
+  return StorageRepository(ref.read);
 });
 
-class AccountRepository {
-  AccountRepository(this._read);
+class StorageRepository {
+  StorageRepository(this._read);
   final Reader _read;
 
-  late final firestore = _read(firestoreProvider);
-  late final refarence = firestore.collection(accounts);
-  late final accountConverter = refarence.withConverter<Account>(
+  late final firestore = _read(_firestoreProvider);
+
+  // Acccounsに関する変数
+  late final user = _read(userProvider).value;
+  late final accounsRef = firestore.collection(accounts);
+  late final accountsConverter = accounsRef.withConverter<Account>(
       fromFirestore: (ds, _) => Account.fromDocumentSnapshot(ds),
       toFirestore: (account, _) => account.toJson());
 
-  /// Documentsが格納されているか確認し関数を分岐して実行する
-  Future<Account?> checkDocuments(UserCredential userCredential) async {
-    final uid = userCredential.user!.uid;
-    final document = await fetchByUid(uid);
+  /// Documentを確認し、存在しなければ格納する関数
+  Future<void> checkBeforeStoring() async {
+    final docSnapshot = await fetchByUid();
 
-    /// documentがNullでない場合はそのままdocumentを返す
-    if (document != null) {
-      return document;
+    if (docSnapshot == null) {
+      await storeAccountData();
     }
-
-    /// Nullの場合は格納する関数を実行し戻り値を返す
-    final storedDocument = await storeAccountData(userCredential);
-    return storedDocument;
   }
 
-  /// userDataを「accounts」コレクションに格納する関数
-  Future<Account?> storeAccountData(UserCredential userCredential) async {
-    final uid = userCredential.user!.uid;
-    final photoURL = userCredential.user!.photoURL;
-    final displayName = userCredential.user!.displayName;
-    final accountDocRef = accountConverter.doc(uid);
+  /// AccountDataを「accounts」コレクションに格納する関数
+  Future<void> storeAccountData() async {
+    final uid = user?.uid;
+    final name = user?.displayName;
+    final photoURL = user?.photoURL;
+    final accountDocRef = accountsConverter.doc(uid);
 
     final account = Account(
-      name: displayName!,
+      name: name!,
       createdAt: null,
       photoURL: photoURL!,
     );
-
     await accountDocRef.set(account);
-
-    final returnSnapshot = await fetchByUid(uid);
-    return returnSnapshot;
   }
 
-  /// 仮引数で受け取ったuidを使い、DocumentSnapshotを返す関数
-  Future<Account?> fetchByUid(String uid) async {
-    final docSnapshot = await accountConverter.doc(uid).get();
+  /// Uidを使用しDocumentSnapshotを返す関数
+  Future<Account?> fetchByUid() async {
+    if (user == null) {
+      throw 'ログインが行われていません';
+    }
+
+    final docSnapshot = await accountsConverter.doc(user?.uid).get();
+
+    if (docSnapshot.data() == null) {
+      return null;
+    }
     return docSnapshot.data();
   }
 }

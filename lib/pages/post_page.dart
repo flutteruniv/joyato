@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PostPage extends StatelessWidget {
-  const PostPage({super.key});
+import '../post_storage.dart';
+
+final titleControllerStateProvider = StateProvider.autoDispose((ref) {
+  return TextEditingController(text: '');
+});
+final bodyControllerStateProvider = StateProvider.autoDispose((ref) {
+  return TextEditingController(text: '');
+});
+
+class PostingPage extends ConsumerWidget {
+  const PostingPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final titleControllerProvider = ref.watch(titleControllerStateProvider);
+    final bodyControllerProvider = ref.watch(bodyControllerStateProvider);
+    late final postRepository = ref.read(postsRepositoryProvider);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -25,10 +39,18 @@ class PostPage extends StatelessWidget {
               },
             ),
             const Text('タイトル'),
-            const TextField(),
+            TextFormField(
+              controller: titleControllerProvider,
+            ),
             const Text('内容'),
-            const TextField(),
-            ElevatedButton(onPressed: () {}, child: const Text('投稿する'))
+            TextFormField(
+              controller: bodyControllerProvider,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  postRepository.storePostData();
+                },
+                child: const Text('投稿する'))
           ],
         ),
       ),
