@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'auth.dart';
-import 'domain/account.dart';
+import '../auth/auth.dart';
+import '../domain/account.dart';
 
 const String accounts = 'accounts';
 const String posts = 'posts';
@@ -12,16 +12,15 @@ final _firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
 /// AccountRepositoryをプロバイドする Provider
 final accountRepositoryProvider = Provider((ref) {
-  return StorageRepository(ref.read);
+  return AccountRepository(ref.read);
 });
 
-class StorageRepository {
-  StorageRepository(this._read);
+///
+class AccountRepository {
+  AccountRepository(this._read);
   final Reader _read;
 
   late final firestore = _read(_firestoreProvider);
-
-  // Acccounsに関する変数
   late final user = _read(userProvider).value;
   late final accounsRef = firestore.collection(accounts);
   late final accountsConverter = accounsRef.withConverter<Account>(
@@ -58,7 +57,7 @@ class StorageRepository {
       throw 'ログインが行われていません';
     }
 
-    final docSnapshot = await accountsConverter.doc(user?.uid).get();
+    final docSnapshot = await accountsConverter.doc(user!.uid).get();
 
     if (docSnapshot.data() == null) {
       return null;
