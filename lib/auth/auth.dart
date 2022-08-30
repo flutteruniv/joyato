@@ -12,10 +12,6 @@ final googleSignInProvider = Provider(
   (ref) => GoogleSignIn(),
 );
 
-final activeUidProvider = StateProvider<String?>((ref) {
-  return null;
-});
-
 /// AuthRepositoryクラスをプロバイドした変数
 final authRepositoryProvider = Provider((ref) {
   return AuthRepository(ref.read);
@@ -41,7 +37,6 @@ class AuthRepository {
 
   late final firebaseAuth = _read(firebaseAuthProvider);
   late final googleSignIn = _read(googleSignInProvider);
-  late final activeUid = _read(activeUidProvider.notifier);
   late final stream = _read(authStateChangesProvider);
 
   Future<void> singOut() async {
@@ -59,9 +54,6 @@ class AuthRepository {
 
     final userCredential =
         await firebaseAuth.signInWithCredential(googleCredential);
-    final uid = userCredential.user!.uid;
-
-    activeUid.state = uid;
     return userCredential;
   }
 }
