@@ -13,6 +13,9 @@ _$_Post _$$_PostFromJson(Map<String, dynamic> json) => _$_Post(
       photoURL: json['photoURL'] ?? '',
       uid: json['uid'] as String,
       createdAt: const AutoTimestampConverter().fromJson(json['createdAt']),
+      position:
+          _$JsonConverterFromJson<Map<String, Object>, Map<String, Object>>(
+              json['position'], const GeoFirePointConverter().fromJson),
     );
 
 Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
@@ -22,4 +25,19 @@ Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
       'photoURL': instance.photoURL,
       'uid': instance.uid,
       'createdAt': const AutoTimestampConverter().toJson(instance.createdAt),
+      'position':
+          _$JsonConverterToJson<Map<String, Object>, Map<String, Object>>(
+              instance.position, const GeoFirePointConverter().toJson),
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

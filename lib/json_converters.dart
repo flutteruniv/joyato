@@ -50,6 +50,18 @@ class GeoPointConverter implements JsonConverter<GeoPoint, GeoPoint> {
   GeoPoint toJson(GeoPoint geopoint) => geopoint;
 }
 
+class GeoFirePointConverter
+    implements JsonConverter<Map<String, Object>, Map<String, Object>> {
+  const GeoFirePointConverter();
+
+  @override
+  Map<String, Object> fromJson(Map<String, Object> geofirepoint) =>
+      geofirepoint;
+
+  @override
+  Map<String, Object> toJson(Map<String, Object> geofirepoint) => geofirepoint;
+}
+
 /// Firestore ドキュメントには FieldValue.serverTimestamp() を、
 /// Dart のインスタンスとしては DateTime を与える。
 /// タイムスタンプのコンバータ。
