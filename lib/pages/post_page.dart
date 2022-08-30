@@ -8,9 +8,10 @@ class PostingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleControllerProvider = ref.read(titleControllerStateProvider);
     final bodyControllerProvider = ref.read(bodyControllerStateProvider);
-    late final postRepository = ref.read(postsRepositoryProvider);
+    final postRepository = ref.read(postsRepositoryProvider);
+    final titleControllerProvider = ref.watch(titleControllerStateProvider.state);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +36,7 @@ class PostingPage extends ConsumerWidget {
             // ],
             const Text('タイトル'),
             TextFormField(
-              controller: titleControllerProvider,
+              controller: titleControllerProvider.state,
             ),
             const Text('内容'),
             TextFormField(

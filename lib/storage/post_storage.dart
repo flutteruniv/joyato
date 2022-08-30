@@ -9,17 +9,23 @@ import '../domain/post.dart';
 const String posts = 'posts';
 
 /// FireStoreインスタンスをプロバイドする Provider
-final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
+final firestoreProvider =
+    Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-/// title の TextEditingController を提供する Provider
-final titleControllerStateProvider = StateProvider.autoDispose((ref) {
+/// title の TextEditingController を提供する StateProvider
+final titleControllerStateProvider =
+    StateProvider.autoDispose<TextEditingController>((ref) {
   return TextEditingController(text: '');
 });
 
-/// body の TextEditingController を提供する Provider
-final bodyControllerStateProvider = StateProvider.autoDispose((ref) {
+/// body の TextEditingController を提供する StateProvider
+final bodyControllerStateProvider =
+    StateProvider.autoDispose<TextEditingController>((ref) {
   return TextEditingController(text: '');
 });
+
+final titleResponseProvider = Provider.autoDispose<String>(
+    (ref) => ref.watch(titleControllerStateProvider).value.text);
 
 //final geoProvider = Provider((ref) => Geoflutterfire());
 
@@ -27,7 +33,7 @@ final geo = Geoflutterfire();
 final _firestore = FirebaseFirestore.instance;
 GeoFirePoint myLocation = geo.point(latitude: 35.675, longitude: 139.780);
 
-void addPositon() async {
+Future<void> addPositon() async {
   await _firestore
       .collection('locations')
       .add({'name': 'random name', 'position': myLocation.data});
@@ -46,7 +52,7 @@ class PostRepository {
   late final firestore = _read(firestoreProvider);
 
   late final user = _read(userProvider).value;
-  late final titleController = _read(titleControllerStateProvider);
+  late final titleController = _read(titleResponseProvider);
   late final bodyController = _read(bodyControllerStateProvider);
 
   // Postsに関する変数
@@ -57,20 +63,21 @@ class PostRepository {
 
   /// PostDataを「posts」コレクションに格納する関数
   Future<void> storePostData() async {
-    final titel = titleController.text;
+    final titel = titleController;
     final body = bodyController.text;
     final postDocRef = postsConverter;
 
     if (user == null) {
       throw 'ログインしていません';
     }
-
+    
     final post = Post(
       title: titel,
       body: body,
       name: user!.displayName ?? '',
       uid: user!.uid,
       createdAt: null,
+      position: myLocation.data,
     );
 
     await postDocRef.add(post);
