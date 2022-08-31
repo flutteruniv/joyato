@@ -24,8 +24,8 @@ final bodyControllerStateProvider =
   return TextEditingController(text: '');
 });
 
-final titleResponseProvider = Provider.autoDispose<String>(
-    (ref) => ref.watch(titleControllerStateProvider).value.text);
+// final titleResponseProvider = Provider.autoDispose<String>(
+//     (ref) => ref.watch(titleControllerStateProvider).value.text);
 
 //final geoProvider = Provider((ref) => Geoflutterfire());
 
@@ -52,7 +52,7 @@ class PostRepository {
   late final firestore = _read(firestoreProvider);
 
   late final user = _read(userProvider).value;
-  late final titleController = _read(titleResponseProvider);
+  late final titleController = _read(titleControllerStateProvider);
   late final bodyController = _read(bodyControllerStateProvider);
 
   // Postsに関する変数
@@ -63,14 +63,14 @@ class PostRepository {
 
   /// PostDataを「posts」コレクションに格納する関数
   Future<void> storePostData() async {
-    final titel = titleController;
+    final titel = titleController.text;
     final body = bodyController.text;
     final postDocRef = postsConverter;
 
     if (user == null) {
       throw 'ログインしていません';
     }
-    
+
     final post = Post(
       title: titel,
       body: body,
