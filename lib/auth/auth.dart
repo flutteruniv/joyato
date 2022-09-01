@@ -17,9 +17,6 @@ final authRepositoryProvider = Provider((ref) {
   return AuthRepository(ref.read);
 });
 
-/// signInWithGoogleの戻り値をプロバイドする変数
-//final uidProvider = Provider<User>((ref) => ref.read(authStateChangesProvider));
-
 /// Firebase-Auth変更情報を提供する StreamProvider
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   return ref.read(firebaseAuthProvider).authStateChanges();
@@ -29,7 +26,6 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
 final userProvider = Provider<AsyncValue<User?>>(
   (ref) => ref.watch(authStateChangesProvider).whenData((user) => user),
 );
-
 
 class AuthRepository {
   AuthRepository(this._read);

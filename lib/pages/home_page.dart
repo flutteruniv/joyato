@@ -2,13 +2,23 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../auth/auth.dart';
+import '../domain/post.dart';
+import '../storage/post_storage.dart';
 import 'post_page.dart';
 import 'sign_in_page.dart';
+
+final markerStateProvider = StateProvider<Set<Marker>>((ref) => <Marker>{
+      const Marker(
+        markerId: MarkerId('111'),
+        position: LatLng(35.675, 139.770),
+      )
+    });
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -31,13 +41,26 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _initPosition = CameraPosition(target: _initLatLng, zoom: 14.0);
 
   final _controller = Completer<GoogleMapController>();
-  final _markers = <Marker>{};
+  final Set<Marker> _markers = {};
 
   late final authRepository = ref.read(authRepositoryProvider);
+  late final markerProvider = ref.read(postStreamProvider.stream);
 
   @override
   void initState() {
     super.initState();
+    // _markers = markerProvider.value == null
+    //     ? markerProvider.value.docs.map((postSnap) {
+    //         final data = postSnap.data();
+    //         final geopoint = data.position!['geopoint'] as GeoPoint;
+    //         final pointlat = geopoint.latitude;
+    //         final pointlng = geopoint.longitude;
+    //         return Marker(
+    //           markerId: MarkerId(geopoint.toString()),
+    //           position: LatLng(pointlat, pointlng),
+    //         );
+    //       }).toSet()
+    //     : <Marker>{};
   }
 
   /// サインアウト後に [SignInPage] に遷移する
@@ -62,30 +85,55 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ホームページ'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () => signOut(),
-          )
-        ],
-      ),
-      body: GoogleMap(
-        mapType: MapType.terrain,
-        initialCameraPosition: _initPosition,
-        markers: _markers,
-        minMaxZoomPreference: _miMinMaxZoomPreference,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-        onMapCreated: (controller) {
-          _controller.complete(controller);
-        },
-        onTap: (latLng) async {
-          await canvasMarkerCreate(latLng);
-        },
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('ホームページ'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.exit_to_app),
+                onPressed: () => signOut(),
+              )
+            ],
+          ),
+          body: StreamBuilder<QuerySnapshot<Post>>(
+              stream: markerProvider,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Post>> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text('Loading');
+                }
+                final geopoint = snapshot.data as GeoPoint;
+                final pointlat = geopoint.latitude;
+                final pointlng = geopoint.longitude;
+
+                return GoogleMap(
+                  mapType: MapType.terrain,
+                  initialCameraPosition: _initPosition,
+                  markers: <Marker>{
+                    Marker(
+                      markerId: MarkerId(geopoint.toString()),
+                      position: LatLng(pointlat, pointlng),
+                    ),
+                  },
+                  minMaxZoomPreference: _miMinMaxZoomPreference,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  onMapCreated: (controller) {
+                    _controller.complete(controller);
+                  },
+                  onTap: (latLng) async {
+                    await canvasMarkerCreate(latLng);
+                  },
+                );
+              }),
+        ),
+      ],
     );
   }
 

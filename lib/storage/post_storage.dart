@@ -24,6 +24,25 @@ final bodyControllerStateProvider =
   return TextEditingController(text: '');
 });
 
+final postpost = FutureProvider(
+  ((ref) => ref.read(firestoreProvider).collection(posts)),
+);
+
+final postStreamProvider = StreamProvider((ref) {
+  return ref
+      .read(firestoreProvider)
+      .collection(posts)
+      .withConverter<Post>(
+          fromFirestore: (ds, _) => Post.fromDocumentSnapshot(ds),
+          toFirestore: (post, _) => post.toJson())
+      .snapshots();
+});
+
+final positonProvider = Provider((ref) {
+  final position = ref.watch(postStreamProvider.stream);
+  position.map((event) => null);
+});
+
 // final titleResponseProvider = Provider.autoDispose<String>(
 //     (ref) => ref.watch(titleControllerStateProvider).value.text);
 
