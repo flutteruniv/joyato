@@ -28,7 +28,8 @@ final postpost = FutureProvider(
   ((ref) => ref.read(firestoreProvider).collection(posts)),
 );
 
-final postStreamProvider = StreamProvider((ref) {
+/// PostsコレクションのSnapShotを提供する StreamProvider
+final postStreamProvider = StreamProvider<QuerySnapshot<Post>>((ref) {
   return ref
       .read(firestoreProvider)
       .collection(posts)
