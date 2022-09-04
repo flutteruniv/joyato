@@ -15,7 +15,7 @@ class Post with _$Post {
     @Default('') photoURL,
     required String uid,
     @AutoTimestampConverter() DateTime? createdAt,
-    @GeoFirePointConverter() Map<String, Object> position,
+    @GeoFirePointConverter() Map<String, Object>? position,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);

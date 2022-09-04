@@ -15,7 +15,7 @@ final accountRepositoryProvider = Provider((ref) {
   return AccountRepository(ref.read);
 });
 
-///
+///　Account情報を格納するリポジトリ
 class AccountRepository {
   AccountRepository(this._read);
   final Reader _read;
@@ -36,7 +36,7 @@ class AccountRepository {
     }
   }
 
-  /// AccountDataを「accounts」コレクションに格納する関数
+  /// AccountDataを[accounts]コレクションに格納する関数
   Future<void> storeAccountData() async {
     final uid = user?.uid;
     final name = user?.displayName;

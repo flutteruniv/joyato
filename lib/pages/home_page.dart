@@ -5,19 +5,13 @@ import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../auth/auth.dart';
 import '../storage/post_storage.dart';
 import 'post_page.dart';
 import 'sign_in_page.dart';
-
-final markerStateProvider = StateProvider<Set<Marker>>((ref) => <Marker>{
-      const Marker(
-        markerId: MarkerId('111'),
-        position: LatLng(35.675, 139.770),
-      )
-    });
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -36,8 +30,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     _minZoomLevel,
     _maxZoomLevel,
   );
-
-  final List<Marker> _markers = [];
+  // 地図上に表示するマーカー
+  Set<Marker> _markers = {};
 
   /// 地図初期配置
   static const _initLatLng = LatLng(35.675, 139.770);
@@ -48,18 +42,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    // _markers = markerProvider.value == null
-    //     ? markerProvider.value.docs.map((postSnap) {
-    //         final data = postSnap.data();
-    //         final geopoint = data.position!['geopoint'] as GeoPoint;
-    //         final pointlat = geopoint.latitude;
-    //         final pointlng = geopoint.longitude;
-    //         return Marker(
-    //           markerId: MarkerId(geopoint.toString()),
-    //           position: LatLng(pointlat, pointlng),
-    //         );
-    //       }).toSet()
-    //     : <Marker>{};
   }
 
   /// サインアウト後に [SignInPage] に遷移する
@@ -84,8 +66,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final postRepository = ref.read(postsRepositoryProvider);
     final postAsyncValue = ref.watch(postStreamProvider);
-    print('ポイント');
     return Stack(
       children: [
         postAsyncValue.when(
@@ -99,19 +81,20 @@ class _HomePageState extends ConsumerState<HomePage> {
             final geoPointSet = postDocs.map((postDoc) {
               final geoPoint = postDoc['position']['geopoint'] as GeoPoint;
               return geoPoint;
-            }).toSet();
-            final geoPoint =
-                postValue.docs[0]['position']['geopoint'] as GeoPoint;
+            }).toList();
 
-            final markers = geoPointSet.map((GeoPoint geoPoint) {
+            _markers = geoPointSet.map((GeoPoint geoPoint) {
               final geolatitude = geoPoint.latitude;
               final geolongitude = geoPoint.longitude;
-              return Marker(
-                markerId: MarkerId(geoPoint.toString()),
+              final marker = Marker(
+                markerId: MarkerId(geoPoint.latitude.toString() +
+                    geoPoint.longitude.toString()),
                 position: LatLng(geolatitude, geolongitude),
+                onTap: () => movePostsPage(geoPoint),
               );
-
+              return marker;
             }).toSet();
+
             return Scaffold(
               appBar: AppBar(
                 title: const Text('ホームページ'),
@@ -125,7 +108,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               body: GoogleMap(
                 mapType: MapType.terrain,
                 initialCameraPosition: _initPosition,
-                markers: markers,
+                markers: _markers,
                 minMaxZoomPreference: _miMinMaxZoomPreference,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
@@ -133,7 +116,22 @@ class _HomePageState extends ConsumerState<HomePage> {
                   _controller.complete(controller);
                 },
                 onTap: (latLng) async {
-                  await canvasMarkerCreate(latLng);
+                  try {
+                    final geo = Geoflutterfire();
+                    final geoFirePoint = geo.point(
+                        latitude: latLng.latitude, longitude: latLng.longitude);
+
+                    await postRepository.storePinToPostCorrection(geoFirePoint);
+
+                    /// TODO. 本当にgeoFirePointProviderを使用するべきか検討する
+                    ref
+                        .watch(geoFirePointProvider.notifier)
+                        .update((state) => geoFirePoint);
+                  } catch (e) {
+                    Text(
+                      e.toString(),
+                    );
+                  } finally {}
                 },
               ),
             );
@@ -144,6 +142,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+  /// Canvasを使用しマーカーを作成する関数
+  // TODO. マーカーの見た目を変更する際に使用するため残す
   Future<void> canvasMarkerCreate(LatLng latLng) async {
     /// 初期Canvasサイズ
     final markerIcon = await getBytesFromCanvas(100, 100);
@@ -151,13 +151,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         //title: '投稿する',
         //onTap: writeToPin(),
         );
-
     final marker = Marker(
       infoWindow: infoWindow,
       markerId: MarkerId(latLng.toString()),
       icon: BitmapDescriptor.fromBytes(markerIcon),
       position: latLng,
-      onTap: () => writeToPin(),
+      //onTap: () => movePostsPage(),
     );
 
     setState(() {
@@ -165,9 +164,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
-  void writeToPin() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const PostingPage()));
+  /// [PostingPage]に遷移する
+  void movePostsPage(GeoPoint geoPoint) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PostingPage(
+              geoPoint: geoPoint,
+            )));
   }
 
   /// 引数からUint8List型でCancvasをリターンする関数

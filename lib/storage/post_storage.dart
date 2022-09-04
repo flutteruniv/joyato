@@ -24,10 +24,6 @@ final bodyControllerStateProvider =
   return TextEditingController(text: '');
 });
 
-final postpost = FutureProvider(
-  ((ref) => ref.read(firestoreProvider).collection(posts)),
-);
-
 /// PostsコレクションのSnapShotを提供する StreamProvider
 final postStreamProvider = StreamProvider<QuerySnapshot<Post>>((ref) {
   return ref
@@ -39,25 +35,11 @@ final postStreamProvider = StreamProvider<QuerySnapshot<Post>>((ref) {
       .snapshots();
 });
 
-final positonProvider = Provider((ref) {
-  final position = ref.watch(postStreamProvider.stream);
-  position.map((event) => null);
+/// GeoFirePointを提供する StateProvider
+final geoFirePointProvider = StateProvider.autoDispose<GeoFirePoint?>((ref) {
+  GeoFirePoint? geoFirePoint;
+  return geoFirePoint;
 });
-
-// final titleResponseProvider = Provider.autoDispose<String>(
-//     (ref) => ref.watch(titleControllerStateProvider).value.text);
-
-//final geoProvider = Provider((ref) => Geoflutterfire());
-
-final geo = Geoflutterfire();
-final _firestore = FirebaseFirestore.instance;
-GeoFirePoint myLocation = geo.point(latitude: 35.675, longitude: 139.780);
-
-Future<void> addPositon() async {
-  await _firestore
-      .collection('locations')
-      .add({'name': 'random name', 'position': myLocation.data});
-}
 
 /// PostRepositoryをプロバイドする Provider
 final postsRepositoryProvider = Provider((ref) {
@@ -81,25 +63,41 @@ class PostRepository {
       fromFirestore: (ds, _) => Post.fromDocumentSnapshot(ds),
       toFirestore: (post, _) => post.toJson());
 
-  /// PostDataを「posts」コレクションに格納する関数
-  Future<void> storePostData() async {
-    final titel = titleController.text;
+  /// Pin情報を更新する関数
+  Future<void> updatePin(GeoPoint geoPoint) async {
+    final postId = geoPoint.latitude.toString() + geoPoint.longitude.toString();
+    final postDocRef = postsRef.doc(postId);
+    final title = titleController.text;
     final body = bodyController.text;
-    final postDocRef = postsConverter;
+
+    await postDocRef.update(
+      {
+        'title': title,
+        'body': body,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
+    );
+  }
+
+  /// PostDataを[posts]コレクションに格納する関数
+  Future<void> storePinToPostCorrection(GeoFirePoint geoFirePoint) async {
+    final position = geoFirePoint;
+    final postId = position.latitude.toString() + position.longitude.toString();
+    final postDocRef = postsConverter.doc(postId);
 
     if (user == null) {
       throw 'ログインしていません';
     }
 
     final post = Post(
-      title: titel,
-      body: body,
+      title: '',
+      body: '',
       name: user!.displayName ?? '',
       uid: user!.uid,
       createdAt: null,
-      position: myLocation.data,
+      position: position.data,
     );
-
-    await postDocRef.add(post);
+    // Idを指定しDocumentを作成する
+    await postDocRef.set(post);
   }
 }

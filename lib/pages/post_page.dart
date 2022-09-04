@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/post_storage.dart';
 
 class PostingPage extends ConsumerWidget {
-  const PostingPage({super.key});
+  PostingPage({super.key, required this.geoPoint});
+  GeoPoint geoPoint;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,19 +27,6 @@ class PostingPage extends ConsumerWidget {
           body: Center(
             child: Column(
               children: [
-                // const Text('画像'),
-                // GestureDetector(
-                //   child: Container(
-                //     color: Colors.green,
-                //     width: 200,
-                //     height: 200,
-                //   ),
-                //   onTap: () {
-                //   },
-                // ),
-                // if (ref.watch(postResponseFutureProvider).isLoading) ...[
-                //   const CircularProgressIndicator(),
-                // ],
                 const Text('タイトル'),
                 TextFormField(
                   controller: titleControllerProvider.state,
@@ -48,9 +37,10 @@ class PostingPage extends ConsumerWidget {
                 ),
                 ElevatedButton(
                     onPressed: () async {
+                      // ToDO. ピン情報を更新しなかった場合の動作を実装する
                       try {
                         isLoading = true;
-                        await postRepository.storePostData();
+                        await postRepository.updatePin(geoPoint);
                         navigator.pop();
                       } catch (e) {
                         final snackBar = SnackBar(

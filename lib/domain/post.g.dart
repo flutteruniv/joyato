@@ -6,6 +6,7 @@ part of 'post.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+// ignore: non_constant_identifier_names
 _$_Post _$$_PostFromJson(Map<String, dynamic> json) => _$_Post(
       title: json['title'] as String,
       body: json['body'] as String,
@@ -18,6 +19,7 @@ _$_Post _$$_PostFromJson(Map<String, dynamic> json) => _$_Post(
               json['position'], const GeoFirePointConverter().fromJson),
     );
 
+// ignore: non_constant_identifier_names
 Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
       'title': instance.title,
       'body': instance.body,
