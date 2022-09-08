@@ -16,17 +16,17 @@ class PassthroughConverter<T> implements JsonConverter<T, Object?> {
   Object? toJson(T object) => object;
 }
 
-class DocumentReferenceConverter<T>
-    implements JsonConverter<DocumentReference<T>, DocumentReference<Object?>> {
-  const DocumentReferenceConverter();
-
-  @override
-  DocumentReference<T> fromJson(DocumentReference<Object?> ref) =>
-      ref as DocumentReference<T>;
-
-  @override
-  DocumentReference<Object?> toJson(DocumentReference<T> ref) => ref;
-}
+// class DocumentReferenceConverter<T>
+//     implements JsonConverter<DocumentReference<T>, DocumentReference<Object?>> {
+//   const DocumentReferenceConverter();
+//
+//   @override
+//   DocumentReference<T> fromJson(DocumentReference<Object?> ref) =>
+//       ref as DocumentReference<T>;
+//
+//   @override
+//   DocumentReference<Object?> toJson(DocumentReference<T> ref) => ref;
+// }
 
 class NullableDocumentReferenceConverter<T>
     implements
