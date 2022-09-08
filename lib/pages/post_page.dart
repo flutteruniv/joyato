@@ -1,12 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 import '../storage/post_storage.dart';
 
-class PostingPage extends ConsumerWidget {
-  PostingPage({super.key, required this.geoPoint});
-  GeoPoint geoPoint;
+// ignore: must_be_immutable
+class PostPage extends ConsumerWidget {
+  PostPage({super.key, required this.geoFirePoint});
+  GeoFirePoint geoFirePoint;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,10 +20,15 @@ class PostingPage extends ConsumerWidget {
 
     return Stack(
       children: [
+        WillPopScope(
+        onWillPop: () {Navigator.of(context).pop(false);
+    return Future.value(false);},
+        child:
         Scaffold(
           appBar: AppBar(
             centerTitle: true,
             title: const Text('投稿'),
+            //leading: const Icon(Icons.arrow_back),
           ),
           body: Center(
             child: Column(
@@ -40,7 +46,9 @@ class PostingPage extends ConsumerWidget {
                       // ToDO. ピン情報を更新しなかった場合の動作を実装する
                       try {
                         isLoading = true;
-                        await postRepository.updatePin(geoPoint);
+                        await postRepository
+                            .storePinToPostCorrection(geoFirePoint);
+                        //postRepository.initializeTextEditingController();
                         navigator.pop();
                       } catch (e) {
                         final snackBar = SnackBar(
@@ -57,6 +65,7 @@ class PostingPage extends ConsumerWidget {
             ),
           ),
         ),
+        ),
         if (isLoading)
           const ColoredBox(
             color: Colors.black54,
@@ -66,5 +75,29 @@ class PostingPage extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  Future<bool> _backButtonPress(BuildContext context) async {
+    final answer = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Dialog'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text('No')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Yes'))
+            ],
+          );
+        });
+
+    return answer ?? false;
   }
 }

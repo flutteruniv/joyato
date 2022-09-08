@@ -31,7 +31,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     _maxZoomLevel,
   );
   // 地図上に表示するマーカー
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
+  final Set<Marker> _localMarkers = {};
 
   /// 地図初期配置
   static const _initLatLng = LatLng(35.675, 139.770);
@@ -66,7 +67,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final postRepository = ref.read(postsRepositoryProvider);
     final postAsyncValue = ref.watch(postStreamProvider);
     return Stack(
       children: [
@@ -78,21 +78,24 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           data: (postValue) {
             final postDocs = postValue.docs;
-            final geoPointSet = postDocs.map((postDoc) {
+            final geoPointList = postDocs.map((postDoc) {
               final geoPoint = postDoc['position']['geopoint'] as GeoPoint;
               return geoPoint;
             }).toList();
 
-            _markers = geoPointSet.map((GeoPoint geoPoint) {
-              final geolatitude = geoPoint.latitude;
-              final geolongitude = geoPoint.longitude;
+            geoPointList.map((GeoPoint geoPoint) {
+              final geo = Geoflutterfire();
+              final geoFirePoint = geo.point(
+                  latitude: geoPoint.latitude, longitude: geoPoint.longitude);
+              final geoLatitude = geoPoint.latitude;
+              final geoLongitude = geoPoint.longitude;
               final marker = Marker(
                 markerId: MarkerId(geoPoint.latitude.toString() +
                     geoPoint.longitude.toString()),
-                position: LatLng(geolatitude, geolongitude),
-                onTap: () => movePostsPage(geoPoint),
+                position: LatLng(geoLatitude, geoLongitude),
+                onTap: () => movePostPage(geoFirePoint),
               );
-              return marker;
+              _markers.add(marker);
             }).toSet();
 
             return Scaffold(
@@ -108,22 +111,29 @@ class _HomePageState extends ConsumerState<HomePage> {
               body: GoogleMap(
                 mapType: MapType.terrain,
                 initialCameraPosition: _initPosition,
-                markers: _markers,
+                markers: _markers.union(_localMarkers),
                 minMaxZoomPreference: _miMinMaxZoomPreference,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 onMapCreated: (controller) {
                   _controller.complete(controller);
                 },
-                onTap: (latLng) async {
+                onTap: (latLng) {
                   try {
                     final geo = Geoflutterfire();
                     final geoFirePoint = geo.point(
                         latitude: latLng.latitude, longitude: latLng.longitude);
+                    final marker = Marker(
+                      markerId: const MarkerId('local'),
+                      position: latLng,
+                      onTap: () => movePostPage(geoFirePoint),
+                    );
+                    setState(() {
+                      _localMarkers.add(marker);
+                    });
+                    // await postRepository.storePinToPostCorrection(geoFirePoint);
 
-                    await postRepository.storePinToPostCorrection(geoFirePoint);
-
-                    /// TODO. 本当にgeoFirePointProviderを使用するべきか検討する
+                    // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
                     ref
                         .watch(geoFirePointProvider.notifier)
                         .update((state) => geoFirePoint);
@@ -143,7 +153,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// Canvasを使用しマーカーを作成する関数
-  // TODO. マーカーの見た目を変更する際に使用するため残す
+  // TODO(odaken): マーカーの見た目を変更する際に使用するため残す
   Future<void> canvasMarkerCreate(LatLng latLng) async {
     /// 初期Canvasサイズ
     final markerIcon = await getBytesFromCanvas(100, 100);
@@ -164,45 +174,66 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
-  /// [PostingPage]に遷移する
-  void movePostsPage(GeoPoint geoPoint) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PostingPage(
-              geoPoint: geoPoint,
+  /// [PostPage]に遷移する
+  void movePostPage(GeoFirePoint geoFirePoint) async {
+    final isCreated = await Navigator.of(context).push(MaterialPageRoute<bool>(
+        builder: (context) => PostPage(
+              geoFirePoint: geoFirePoint,
             )));
+    if (isCreated == false) {
+      setState(() {
+        _localMarkers.clear();
+      });
+    }
   }
 
-  /// 引数からUint8List型でCancvasをリターンする関数
-  Future<Uint8List> getBytesFromCanvas(int width, int height) async {
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    final paint = Paint()..color = Colors.red;
-    const radius = Radius.circular(30.0);
-    const text = 'P';
-    const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
-
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius,
-        ),
-        paint);
-
-    final painter = TextPainter(textDirection: TextDirection.ltr);
-    painter.text = const TextSpan(
-      text: text,
-      style: textStyle,
+  /// localMarkerを作成する関数
+  void localMarkerCreate(LatLng latLng) {
+    final geo = Geoflutterfire();
+    final geoFirePoint =
+        geo.point(latitude: latLng.latitude, longitude: latLng.longitude);
+    final marker = Marker(
+      markerId: MarkerId(latLng.toString()),
+      position: latLng,
+      onTap: () => movePostPage(geoFirePoint),
     );
-    painter.layout();
-    painter.paint(
-        canvas,
-        Offset((width * 0.5) - painter.width * 0.5,
-            (height * 0.5) - painter.height * 0.5));
-    final img = await pictureRecorder.endRecording().toImage(width, height);
-    final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return data!.buffer.asUint8List();
+
+    setState(() {
+      _markers.add(marker);
+    });
   }
+}
+
+/// 引数からUint8List型でCancvasをリターンする関数
+Future<Uint8List> getBytesFromCanvas(int width, int height) async {
+  final pictureRecorder = ui.PictureRecorder();
+  final canvas = Canvas(pictureRecorder);
+  final paint = Paint()..color = Colors.red;
+  const radius = Radius.circular(30.0);
+  const text = 'P';
+  const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
+
+  canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
+        topLeft: radius,
+        topRight: radius,
+        bottomLeft: radius,
+        bottomRight: radius,
+      ),
+      paint);
+
+  final painter = TextPainter(textDirection: TextDirection.ltr);
+  painter.text = const TextSpan(
+    text: text,
+    style: textStyle,
+  );
+  painter.layout();
+  painter.paint(
+      canvas,
+      Offset((width * 0.5) - painter.width * 0.5,
+          (height * 0.5) - painter.height * 0.5));
+  final img = await pictureRecorder.endRecording().toImage(width, height);
+  final data = await img.toByteData(format: ui.ImageByteFormat.png);
+  return data!.buffer.asUint8List();
 }

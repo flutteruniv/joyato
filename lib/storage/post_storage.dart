@@ -14,13 +14,12 @@ final firestoreProvider =
 
 /// title の TextEditingController を提供する StateProvider
 final titleControllerStateProvider =
-    StateProvider.autoDispose<TextEditingController>((ref) {
+    StateProvider<TextEditingController>((ref) {
   return TextEditingController(text: '');
 });
 
 /// body の TextEditingController を提供する StateProvider
-final bodyControllerStateProvider =
-    StateProvider.autoDispose<TextEditingController>((ref) {
+final bodyControllerStateProvider = StateProvider<TextEditingController>((ref) {
   return TextEditingController(text: '');
 });
 
@@ -81,23 +80,31 @@ class PostRepository {
 
   /// PostDataを[posts]コレクションに格納する関数
   Future<void> storePinToPostCorrection(GeoFirePoint geoFirePoint) async {
-    final position = geoFirePoint;
-    final postId = position.latitude.toString() + position.longitude.toString();
-    final postDocRef = postsConverter.doc(postId);
+    final title = titleController.text;
+    final body = bodyController.text;
+    final postDocRef = postsConverter;
+    final reference = postDocRef.doc();
 
     if (user == null) {
       throw 'ログインしていません';
     }
 
     final post = Post(
-      title: '',
-      body: '',
+      title: title,
+      body: body,
       name: user!.displayName ?? '',
       uid: user!.uid,
       createdAt: null,
-      position: position.data,
+      position: geoFirePoint.data,
+      documentReference: reference,
     );
-    // Idを指定しDocumentを作成する
-    await postDocRef.set(post);
+    await reference.set(post);
+    initializeTextEditingController();
+  }
+
+  // [TextEditingController]を初期化
+  void initializeTextEditingController() {
+    titleController.clear();
+    bodyController.clear();
   }
 }
