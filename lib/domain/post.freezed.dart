@@ -25,6 +25,8 @@ mixin _$Post {
   String get name => throw _privateConstructorUsedError;
   dynamic get photoURL => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
+  DocumentReference<Post> get documentReference =>
+      throw _privateConstructorUsedError;
   @AutoTimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
   @GeoFirePointConverter()
@@ -45,6 +47,7 @@ abstract class $PostCopyWith<$Res> {
       String name,
       dynamic photoURL,
       String uid,
+      DocumentReference<Post> documentReference,
       @AutoTimestampConverter() DateTime? createdAt,
       @GeoFirePointConverter() Map<String, Object>? position});
 }
@@ -64,6 +67,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? name = freezed,
     Object? photoURL = freezed,
     Object? uid = freezed,
+    Object? documentReference = freezed,
     Object? createdAt = freezed,
     Object? position = freezed,
   }) {
@@ -88,6 +92,10 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
+      documentReference: documentReference == freezed
+          ? _value.documentReference
+          : documentReference // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Post>,
       createdAt: createdAt == freezed
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -111,6 +119,7 @@ abstract class _$$_PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       String name,
       dynamic photoURL,
       String uid,
+      DocumentReference<Post> documentReference,
       @AutoTimestampConverter() DateTime? createdAt,
       @GeoFirePointConverter() Map<String, Object>? position});
 }
@@ -131,6 +140,7 @@ class __$$_PostCopyWithImpl<$Res> extends _$PostCopyWithImpl<$Res>
     Object? name = freezed,
     Object? photoURL = freezed,
     Object? uid = freezed,
+    Object? documentReference = freezed,
     Object? createdAt = freezed,
     Object? position = freezed,
   }) {
@@ -152,6 +162,10 @@ class __$$_PostCopyWithImpl<$Res> extends _$PostCopyWithImpl<$Res>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String,
+      documentReference: documentReference == freezed
+          ? _value.documentReference
+          : documentReference // ignore: cast_nullable_to_non_nullable
+              as DocumentReference<Post>,
       createdAt: createdAt == freezed
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -165,7 +179,8 @@ class __$$_PostCopyWithImpl<$Res> extends _$PostCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@allJsonConvertersSerializable
 class _$_Post implements _Post {
   _$_Post(
       {required this.title,
@@ -173,6 +188,7 @@ class _$_Post implements _Post {
       required this.name,
       this.photoURL = '',
       required this.uid,
+      required this.documentReference,
       @AutoTimestampConverter() this.createdAt,
       @GeoFirePointConverter() final Map<String, Object>? position})
       : _position = position;
@@ -191,6 +207,8 @@ class _$_Post implements _Post {
   @override
   final String uid;
   @override
+  final DocumentReference<Post> documentReference;
+  @override
   @AutoTimestampConverter()
   final DateTime? createdAt;
   final Map<String, Object>? _position;
@@ -205,7 +223,7 @@ class _$_Post implements _Post {
 
   @override
   String toString() {
-    return 'Post(title: $title, body: $body, name: $name, photoURL: $photoURL, uid: $uid, createdAt: $createdAt, position: $position)';
+    return 'Post(title: $title, body: $body, name: $name, photoURL: $photoURL, uid: $uid, documentReference: $documentReference, createdAt: $createdAt, position: $position)';
   }
 
   @override
@@ -218,6 +236,8 @@ class _$_Post implements _Post {
             const DeepCollectionEquality().equals(other.name, name) &&
             const DeepCollectionEquality().equals(other.photoURL, photoURL) &&
             const DeepCollectionEquality().equals(other.uid, uid) &&
+            const DeepCollectionEquality()
+                .equals(other.documentReference, documentReference) &&
             const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
             const DeepCollectionEquality().equals(other._position, _position));
   }
@@ -231,6 +251,7 @@ class _$_Post implements _Post {
       const DeepCollectionEquality().hash(name),
       const DeepCollectionEquality().hash(photoURL),
       const DeepCollectionEquality().hash(uid),
+      const DeepCollectionEquality().hash(documentReference),
       const DeepCollectionEquality().hash(createdAt),
       const DeepCollectionEquality().hash(_position));
 
@@ -254,6 +275,7 @@ abstract class _Post implements Post {
       required final String name,
       final dynamic photoURL,
       required final String uid,
+      required final DocumentReference<Post> documentReference,
       @AutoTimestampConverter() final DateTime? createdAt,
       @GeoFirePointConverter() final Map<String, Object>? position}) = _$_Post;
 
@@ -269,6 +291,8 @@ abstract class _Post implements Post {
   dynamic get photoURL;
   @override
   String get uid;
+  @override
+  DocumentReference<Post> get documentReference;
   @override
   @AutoTimestampConverter()
   DateTime? get createdAt;

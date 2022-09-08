@@ -6,7 +6,6 @@ part of 'account.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-// ignore: non_constant_identifier_names
 _$_Account _$$_AccountFromJson(Map<String, dynamic> json) => _$_Account(
       name: json['name'] as String,
       photoURL: json['photoURL'] as String,
@@ -14,7 +13,6 @@ _$_Account _$$_AccountFromJson(Map<String, dynamic> json) => _$_Account(
       coin: json['coin'] ?? 0,
     );
 
-// ignore: non_constant_identifier_names
 Map<String, dynamic> _$$_AccountToJson(_$_Account instance) =>
     <String, dynamic>{
       'name': instance.name,
