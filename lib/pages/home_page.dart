@@ -31,7 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     _maxZoomLevel,
   );
   // 地図上に表示するマーカー
-  final Set<Marker> _markers = {};
+  Set<Marker> _markers = {};
   final Set<Marker> _localMarkers = {};
 
   /// 地図初期配置
@@ -39,6 +39,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   static const _initPosition = CameraPosition(target: _initLatLng, zoom: 14.0);
 
   final _controller = Completer<GoogleMapController>();
+  late DocumentReference<Object?> reference;
+  final postMap = <String, dynamic>{};
 
   @override
   void initState() {
@@ -68,6 +70,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final postAsyncValue = ref.watch(postStreamProvider);
+    final geoFire = Geoflutterfire();
+
     return Stack(
       children: [
         postAsyncValue.when(
@@ -78,28 +82,22 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           data: (postValue) {
             final postDocs = postValue.docs;
-            final geoPointList = postDocs.map((postDoc) {
-              final geoPoint = postDoc['position']['geopoint'] as GeoPoint;
-              return geoPoint;
-            }).toList();
-
-            geoPointList.map((GeoPoint geoPoint) {
-              final geo = Geoflutterfire();
-              final geoFirePoint = geo.point(
+            _markers = postDocs.map((post) {
+              final geoPoint = post['position']['geopoint'] as GeoPoint;
+              final reference = post['documentReference'] as DocumentReference;
+              final geoFirePoint = geoFire.point(
                   latitude: geoPoint.latitude, longitude: geoPoint.longitude);
-              final geoLatitude = geoPoint.latitude;
-              final geoLongitude = geoPoint.longitude;
               final marker = Marker(
-                markerId: MarkerId(geoPoint.latitude.toString() +
-                    geoPoint.longitude.toString()),
-                position: LatLng(geoLatitude, geoLongitude),
+                markerId: MarkerId(reference.id),
+                position: LatLng(geoPoint.latitude, geoPoint.longitude),
                 onTap: () => movePostPage(geoFirePoint),
               );
-              _markers.add(marker);
+              return marker;
             }).toSet();
 
             return Scaffold(
               appBar: AppBar(
+                centerTitle: true,
                 title: const Text('ホームページ'),
                 actions: [
                   IconButton(
@@ -109,41 +107,48 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
               body: GoogleMap(
-                mapType: MapType.terrain,
-                initialCameraPosition: _initPosition,
-                markers: _markers.union(_localMarkers),
-                minMaxZoomPreference: _miMinMaxZoomPreference,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                onMapCreated: (controller) {
-                  _controller.complete(controller);
-                },
-                onTap: (latLng) {
-                  try {
-                    final geo = Geoflutterfire();
-                    final geoFirePoint = geo.point(
-                        latitude: latLng.latitude, longitude: latLng.longitude);
-                    final marker = Marker(
-                      markerId: const MarkerId('local'),
-                      position: latLng,
-                      onTap: () => movePostPage(geoFirePoint),
-                    );
+                  mapType: MapType.terrain,
+                  initialCameraPosition: _initPosition,
+                  markers: _markers
+                      .union(_localMarkers), // FireStoreのマーカーとローカルマーカーの和集合
+                  minMaxZoomPreference: _miMinMaxZoomPreference,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  onMapCreated: (controller) {
+                    _controller.complete(controller);
+                  },
+                  // Tapで地図上にマーカーを立てる
+                  onTap: (latLng) {
+                    try {
+                      final geoFirePoint = geoFire.point(
+                          latitude: latLng.latitude,
+                          longitude: latLng.longitude);
+                      final marker = Marker(
+                        markerId: const MarkerId('local-marker'),
+                        position: latLng,
+                        onTap: () => movePostPage(geoFirePoint),
+                        
+                      );
+                      setState(() {
+                        _localMarkers.add(marker);
+                      });
+                      // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
+                      ref
+                          .watch(geoFirePointProvider.notifier)
+                          .update((state) => geoFirePoint);
+                    } catch (e) {
+                      Text(
+                        e.toString(),
+                      );
+                    } finally {}
+                  },
+                  // LongPressで地図上のローカルマーカーを消す
+                  // ダイヤログに変えても良いと思う
+                  onLongPress: (_) {
                     setState(() {
-                      _localMarkers.add(marker);
+                      _localMarkers.clear();
                     });
-                    // await postRepository.storePinToPostCorrection(geoFirePoint);
-
-                    // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
-                    ref
-                        .watch(geoFirePointProvider.notifier)
-                        .update((state) => geoFirePoint);
-                  } catch (e) {
-                    Text(
-                      e.toString(),
-                    );
-                  } finally {}
-                },
-              ),
+                  }),
             );
           },
           error: ((error, stackTrace) => Text('Error: $error')),
@@ -176,11 +181,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   /// [PostPage]に遷移する
   void movePostPage(GeoFirePoint geoFirePoint) async {
-    final isCreated = await Navigator.of(context).push(MaterialPageRoute<bool>(
+    final shouldDelete = await Navigator.of(context).push(MaterialPageRoute<bool>(
         builder: (context) => PostPage(
               geoFirePoint: geoFirePoint,
             )));
-    if (isCreated == false) {
+    // 投稿せずに戻ってきた場合、_localMarkersを削除する
+    if (shouldDelete == true) {
       setState(() {
         _localMarkers.clear();
       });
