@@ -1,3 +1,5 @@
+///参考
+/// https://github.com/mono0926/json_converter_helper
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

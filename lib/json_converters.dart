@@ -1,7 +1,6 @@
 /// 参考：
 /// https://github.com/mono0926/flutter_firestore_ref
 import 'package:cloud_firestore/cloud_firestore.dart';
-// ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
 
 import 'bool.dart';
