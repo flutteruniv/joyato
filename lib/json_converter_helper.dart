@@ -1,4 +1,4 @@
-///参考
+/// 参考：
 /// https://github.com/mono0926/json_converter_helper
 import 'dart:ui';
 
