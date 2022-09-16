@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,47 +28,31 @@ class _HomePageState extends ConsumerState<HomePage> {
     _minZoomLevel,
     _maxZoomLevel,
   );
-  // 地図上に表示するマーカー
-  Set<Marker> _markers = {};
-  final Set<Marker> _localMarkers = {};
 
   /// 地図初期配置
   static const _initLatLng = LatLng(35.675, 139.770);
   static const _initPosition = CameraPosition(target: _initLatLng, zoom: 14.0);
 
-  final _controller = Completer<GoogleMapController>();
-  late DocumentReference<Object?> reference;
-  final postMap = <String, dynamic>{};
+  /// GoogleMapコントローラー
+  final googleMapController = Completer<GoogleMapController>();
+
+  /// FireStoreから生成したマーカー群
+  Set<Marker> markersGeneratedFromFire = {};
+
+  /// Geoflutterfireインスタンス
+  final geoFire = Geoflutterfire();
+
+  /// Mapをタップ時に表示するマーカー
+  Marker? localMarker;
 
   @override
   void initState() {
     super.initState();
   }
 
-  /// サインアウト後に [SignInPage] に遷移する
-  Future<void> signOut() async {
-    final navigator = Navigator.of(context);
-    unawaited(
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ),
-    );
-    await authRepository.singOut();
-    if (!mounted) {
-      return;
-    }
-    navigator.pop();
-  }
-
   @override
   Widget build(BuildContext context) {
     final postAsyncValue = ref.watch(postStreamProvider);
-    final geoFire = Geoflutterfire();
 
     return Stack(
       children: [
@@ -81,8 +63,12 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
           data: (postValue) {
+            final allMarkers = localMarker == null
+                ? markersGeneratedFromFire
+                : <Marker>{localMarker!, ...markersGeneratedFromFire};
+
             final postDocs = postValue.docs;
-            _markers = postDocs.map((post) {
+            markersGeneratedFromFire = postDocs.map((post) {
               final geoPoint = post['position']['geopoint'] as GeoPoint;
               final reference = post['documentReference'] as DocumentReference;
               final geoFirePoint = geoFire.point(
@@ -109,13 +95,13 @@ class _HomePageState extends ConsumerState<HomePage> {
               body: GoogleMap(
                   mapType: MapType.terrain,
                   initialCameraPosition: _initPosition,
-                  markers: _markers
-                      .union(_localMarkers), // FireStoreのマーカーとローカルマーカーの和集合
+                  markers:
+                      allMarkers, // markersGeneratedFromFireとlocalMarkerを含めたマーカー群
                   minMaxZoomPreference: _miMinMaxZoomPreference,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
                   onMapCreated: (controller) {
-                    _controller.complete(controller);
+                    googleMapController.complete(controller);
                   },
                   // Tapで地図上にマーカーを立てる
                   onTap: (latLng) {
@@ -123,30 +109,31 @@ class _HomePageState extends ConsumerState<HomePage> {
                       final geoFirePoint = geoFire.point(
                           latitude: latLng.latitude,
                           longitude: latLng.longitude);
-                      final marker = Marker(
+                      final tapMarker = Marker(
                         markerId: const MarkerId('local-marker'),
                         position: latLng,
                         onTap: () => movePostPage(geoFirePoint),
-                        
                       );
-                      setState(() {
-                        _localMarkers.add(marker);
-                      });
+                      localMarker = tapMarker;
+                      setState(() {});
                       // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
-                      ref
-                          .watch(geoFirePointProvider.notifier)
-                          .update((state) => geoFirePoint);
-                    } catch (e) {
-                      Text(
-                        e.toString(),
+                      // ref
+                      //     .watch(geoFirePointProvider.notifier)
+                      //     .update((state) => geoFirePoint);
+                    } catch (error) {
+                      final snackBar = SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                            '読み込みがうまくいきませんでした。もう一度お試しください\n${error.toString()}'),
                       );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     } finally {}
                   },
                   // LongPressで地図上のローカルマーカーを消す
                   // ダイヤログに変えても良いと思う
                   onLongPress: (_) {
                     setState(() {
-                      _localMarkers.clear();
+                      localMarker = null;
                     });
                   }),
             );
@@ -157,89 +144,93 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  /// Canvasを使用しマーカーを作成する関数
+  // Canvasを使用しマーカーを作成する関数
   // TODO(odaken): マーカーの見た目を変更する際に使用するため残す
-  Future<void> canvasMarkerCreate(LatLng latLng) async {
-    /// 初期Canvasサイズ
-    final markerIcon = await getBytesFromCanvas(100, 100);
-    const infoWindow = InfoWindow(
-        //title: '投稿する',
-        //onTap: writeToPin(),
-        );
-    final marker = Marker(
-      infoWindow: infoWindow,
-      markerId: MarkerId(latLng.toString()),
-      icon: BitmapDescriptor.fromBytes(markerIcon),
-      position: latLng,
-      //onTap: () => movePostsPage(),
-    );
+  // Future<void> canvasMarkerCreate(LatLng latLng) async {
+  //   /// 初期Canvasサイズ
+  //   final markerIcon = await getBytesFromCanvas(100, 100);
+  //   const infoWindow = InfoWindow(
+  //       //title: '投稿する',
+  //       //onTap: writeToPin(),
+  //       );
+  //   final marker = Marker(
+  //     infoWindow: infoWindow,
+  //     markerId: const MarkerId('local-marker'),
+  //     icon: BitmapDescriptor.fromBytes(markerIcon),
+  //     position: latLng,
+  //     //onTap: () => movePostsPage(),
+  //   );
+  //   setState(() {
+  //     markersGeneratedFromFire.add(marker);
+  //   });
+  // }
 
-    setState(() {
-      _markers.add(marker);
-    });
+  /// サインアウト後に [SignInPage] に遷移する
+  Future<void> signOut() async {
+    final navigator = Navigator.of(context);
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+    await authRepository.singOut();
+    if (!mounted) {
+      return;
+    }
+    navigator.pop();
   }
 
   /// [PostPage]に遷移する
   void movePostPage(GeoFirePoint geoFirePoint) async {
-    final shouldDelete = await Navigator.of(context).push(MaterialPageRoute<bool>(
-        builder: (context) => PostPage(
-              geoFirePoint: geoFirePoint,
-            )));
-    // 投稿せずに戻ってきた場合、_localMarkersを削除する
+    final shouldDelete =
+        await Navigator.of(context).push(MaterialPageRoute<bool>(
+            builder: (context) => PostPage(
+                  geoFirePoint: geoFirePoint,
+                )));
+    // 投稿せずに戻ってきた場合、localMarkerを削除する
     if (shouldDelete == true) {
       setState(() {
-        _localMarkers.clear();
+        localMarker = null;
       });
     }
   }
-
-  /// localMarkerを作成する関数
-  void localMarkerCreate(LatLng latLng) {
-    final geo = Geoflutterfire();
-    final geoFirePoint =
-        geo.point(latitude: latLng.latitude, longitude: latLng.longitude);
-    final marker = Marker(
-      markerId: MarkerId(latLng.toString()),
-      position: latLng,
-      onTap: () => movePostPage(geoFirePoint),
-    );
-
-    setState(() {
-      _markers.add(marker);
-    });
-  }
 }
 
-/// 引数からUint8List型でCancvasをリターンする関数
-Future<Uint8List> getBytesFromCanvas(int width, int height) async {
-  final pictureRecorder = ui.PictureRecorder();
-  final canvas = Canvas(pictureRecorder);
-  final paint = Paint()..color = Colors.red;
-  const radius = Radius.circular(30.0);
-  const text = 'P';
-  const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
+// 引数からUint8List型でCancvasをリターンする関数
+// Future<Uint8List> getBytesFromCanvas(int width, int height) async {
+//   final pictureRecorder = ui.PictureRecorder();
+//   final canvas = Canvas(pictureRecorder);
+//   final paint = Paint()..color = Colors.red;
+//   const radius = Radius.circular(30.0);
+//   const text = 'P';
+//   const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
 
-  canvas.drawRRect(
-      RRect.fromRectAndCorners(
-        Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
-        topLeft: radius,
-        topRight: radius,
-        bottomLeft: radius,
-        bottomRight: radius,
-      ),
-      paint);
+//   canvas.drawRRect(
+//       RRect.fromRectAndCorners(
+//         Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
+//         topLeft: radius,
+//         topRight: radius,
+//         bottomLeft: radius,
+//         bottomRight: radius,
+//       ),
+//       paint);
 
-  final painter = TextPainter(textDirection: TextDirection.ltr);
-  painter.text = const TextSpan(
-    text: text,
-    style: textStyle,
-  );
-  painter.layout();
-  painter.paint(
-      canvas,
-      Offset((width * 0.5) - painter.width * 0.5,
-          (height * 0.5) - painter.height * 0.5));
-  final img = await pictureRecorder.endRecording().toImage(width, height);
-  final data = await img.toByteData(format: ui.ImageByteFormat.png);
-  return data!.buffer.asUint8List();
-}
+//   final painter = TextPainter(textDirection: TextDirection.ltr);
+//   painter.text = const TextSpan(
+//     text: text,
+//     style: textStyle,
+//   );
+//   painter.layout();
+//   painter.paint(
+//       canvas,
+//       Offset((width * 0.5) - painter.width * 0.5,
+//           (height * 0.5) - painter.height * 0.5));
+//   final img = await pictureRecorder.endRecording().toImage(width, height);
+//   final data = await img.toByteData(format: ui.ImageByteFormat.png);
+//   return data!.buffer.asUint8List();
+// }
