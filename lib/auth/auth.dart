@@ -17,9 +17,15 @@ final authRepositoryProvider = Provider((ref) {
   return AuthRepository(ref.read);
 });
 
+/// Firebase-Auth変更情報を提供する StreamProvider
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   return ref.read(firebaseAuthProvider).authStateChanges();
 });
+
+/// FirebaseState変更情報からuidを提供する Provider
+final userProvider = Provider<AsyncValue<User?>>(
+  (ref) => ref.watch(authStateChangesProvider).whenData((user) => user),
+);
 
 class AuthRepository {
   AuthRepository(this._read);
@@ -27,6 +33,7 @@ class AuthRepository {
 
   late final firebaseAuth = _read(firebaseAuthProvider);
   late final googleSignIn = _read(googleSignInProvider);
+  late final stream = _read(authStateChangesProvider);
 
   Future<void> singOut() async {
     await googleSignIn.signOut();
@@ -36,12 +43,13 @@ class AuthRepository {
   Future<UserCredential> signInWithGoogle() async {
     final googleUser = await googleSignIn.signIn();
     final googleAuth = await googleUser?.authentication;
-    final credential = GoogleAuthProvider.credential(
+    final googleCredential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
-    final userCredential = await firebaseAuth.signInWithCredential(credential);
+    final userCredential =
+        await firebaseAuth.signInWithCredential(googleCredential);
     return userCredential;
   }
 }

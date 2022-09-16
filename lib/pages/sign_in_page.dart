@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../auth.dart';
-import '../storage.dart';
+import '../auth/auth.dart';
+import '../storage/account_storage.dart';
 
 class SignInPage extends ConsumerWidget {
   const SignInPage({super.key});
@@ -33,8 +33,8 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            final userCredential = await authRepository.signInWithGoogle();
-            await accountRepository.checkDocuments(userCredential);
+            await authRepository.signInWithGoogle();
+            await accountRepository.storeAccountData();
             navigator.pop();
           },
           child: const Text('Googleサインイン'),

@@ -15,17 +15,17 @@ class PassthroughConverter<T> implements JsonConverter<T, Object?> {
   Object? toJson(T object) => object;
 }
 
-class DocumentReferenceConverter<T>
-    implements JsonConverter<DocumentReference<T>, DocumentReference<Object?>> {
-  const DocumentReferenceConverter();
-
-  @override
-  DocumentReference<T> fromJson(DocumentReference<Object?> ref) =>
-      ref as DocumentReference<T>;
-
-  @override
-  DocumentReference<Object?> toJson(DocumentReference<T> ref) => ref;
-}
+// class DocumentReferenceConverter<T>
+//     implements JsonConverter<DocumentReference<T>, DocumentReference<Object?>> {
+//   const DocumentReferenceConverter();
+//
+//   @override
+//   DocumentReference<T> fromJson(DocumentReference<Object?> ref) =>
+//       ref as DocumentReference<T>;
+//
+//   @override
+//   DocumentReference<Object?> toJson(DocumentReference<T> ref) => ref;
+// }
 
 class NullableDocumentReferenceConverter<T>
     implements
@@ -48,6 +48,18 @@ class GeoPointConverter implements JsonConverter<GeoPoint, GeoPoint> {
 
   @override
   GeoPoint toJson(GeoPoint geopoint) => geopoint;
+}
+
+class GeoFirePointConverter
+    implements JsonConverter<Map<String, Object>, Map<String, Object>> {
+  const GeoFirePointConverter();
+
+  @override
+  Map<String, Object> fromJson(Map<String, Object> geofirepoint) =>
+      geofirepoint;
+
+  @override
+  Map<String, Object> toJson(Map<String, Object> geofirepoint) => geofirepoint;
 }
 
 /// Firestore ドキュメントには FieldValue.serverTimestamp() を、

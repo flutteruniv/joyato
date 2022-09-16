@@ -61,3 +61,7 @@ app.*.map.json
 # API-KEY
 map_api_key.env
 keys.xml
+
+# # Launcher icon image
+# **/android/app/src/main/res/**/*.png
+# **/android/app/src/main/res/drawable-hdpi/ic_launcher_foreground.png
