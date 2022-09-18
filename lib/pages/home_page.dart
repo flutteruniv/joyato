@@ -68,7 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 : <Marker>{localMarker!, ...markersGeneratedFromFire};
 
             final postDocs = postValue.docs;
-            markersGeneratedFromFire = postDocs.map((post) {
+            for (var post in postDocs) {
               final geoPoint = post['position']['geopoint'] as GeoPoint;
               final reference = post['documentReference'] as DocumentReference;
               final geoFirePoint = geoFire.point(
@@ -78,8 +78,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 position: LatLng(geoPoint.latitude, geoPoint.longitude),
                 onTap: () => movePostPage(geoFirePoint),
               );
-              return marker;
-            }).toSet();
+              markersGeneratedFromFire.add(marker);
+            }
 
             return Scaffold(
               appBar: AppBar(
