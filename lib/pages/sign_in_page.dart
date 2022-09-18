@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../auth/auth.dart';
+import '../location/location_permission.dart';
 import '../storage/account_storage.dart';
 
 class SignInPage extends ConsumerWidget {
@@ -34,7 +34,7 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            await permissionRequest();
+            await determinePosition();
             await authRepository.signInWithGoogle();
             await accountRepository.storeAccountData();
             navigator.pop();
@@ -43,9 +43,5 @@ class SignInPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Future<PermissionStatus> permissionRequest() async {
-    return await Permission.location.request();
   }
 }
