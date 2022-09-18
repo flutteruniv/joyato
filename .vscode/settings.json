@@ -1,26 +1,24 @@
 {
-  "cSpell.words": [
-    "Cancvas",
-    "cupertino",
-    "firestore",
-    "geofirepoint",
-    "geoflutterfire",
-    "geolocator",
-    "geopoint",
-    "joyato",
-    "LTWH",
-    "odaken",
-    "riverpod",
-    "todos",
-    "unawaited",
-    "xcconfig"
-  ],
-  "dart.lineLength": 80,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.organizeImports": true,
-    "source.addMissingImports": true,
-    "source.fixAll.eslint": true
-  },
-  "dartImport.fixOnSave": true
+    "cSpell.words": [
+        "Cancvas",
+        "firestore",
+        "geofirepoint",
+        "geoflutterfire",
+        "geopoint",
+        "joyato",
+        "LTWH",
+        "odaken",
+        "riverpod",
+        "todos",
+        "unawaited",
+        "xcconfig"
+    ],
+    "dart.lineLength": 80,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true,
+        "source.organizeImports": true,
+        "source.addMissingImports": true,
+        "source.fixAll.eslint": true
+     },
+     "dartImport.fixOnSave": true
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth/auth.dart';
-import '../location/location_permission.dart';
 import '../storage/account_storage.dart';
 
 class SignInPage extends ConsumerWidget {
@@ -34,7 +33,6 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            await determinePosition();
             await authRepository.signInWithGoogle();
             await accountRepository.storeAccountData();
             navigator.pop();
