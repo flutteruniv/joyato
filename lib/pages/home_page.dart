@@ -10,7 +10,7 @@ import 'package:location/location.dart';
 import '../auth/auth.dart';
 import '../calculate.dart';
 import '../storage/post_storage.dart';
-import '../widget/alertDialog.dart';
+import '../widget/alert_dialog.dart';
 import 'post_page.dart';
 import 'sign_in_page.dart';
 
@@ -123,7 +123,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
               body: GoogleMap(
-                  mapType: MapType.terrain,
                   initialCameraPosition: _initPosition,
                   markers:
                       allMarkers, // markersGeneratedFromFireとlocalMarkerを含めたマーカー群
@@ -132,7 +131,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
                   onMapCreated: (controller) {
-                    googleMapController.complete(controller);
+                    _onMapCreated(controller, context);
                   },
                   // Tapで地図上にマーカーを立てる
                   onTap: (latLng) {
@@ -147,7 +146,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                         shouldCreateByTwoPoint(lat1!, lon1!, lat2, lon2);
 
                     if (isCreatable) {
-                      print('範囲内');
                       final geoFirePoint = geoFire.point(
                           latitude: latLng.latitude,
                           longitude: latLng.longitude);
@@ -183,6 +181,15 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ],
     );
+  }
+
+  Future<void> _onMapCreated(
+      GoogleMapController controller, BuildContext context) async {
+    googleMapController.complete(controller);
+    final value = await DefaultAssetBundle.of(context)
+        .loadString('assets/json/map_style.json'); //カスタムしたMAPのJsonファイルをを読み込む
+    final futureController = await googleMapController.future;
+    await futureController.setMapStyle(value); // Controllerを使ってMapをSetする
   }
 
   // Canvasを使用しマーカーを作成する関数
