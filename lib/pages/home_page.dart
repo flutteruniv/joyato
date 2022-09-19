@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 import '../auth/auth.dart';
+import '../calculate.dart';
 import '../storage/post_storage.dart';
+import '../widget/alertDialog.dart';
 import 'post_page.dart';
 import 'sign_in_page.dart';
 
@@ -45,9 +48,36 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// Mapをタップ時に表示するマーカー
   Marker? localMarker;
 
+  /// 現在地周辺を囲うサークル
+  Circle myLocationCircle = const Circle(circleId: CircleId('First-Circle'));
+
+  /// Locationインスタンス
+  final Location _locationService = Location();
+
+  /// 現在地情報
+  LocationData? myLocation;
+
+  /// 現在地を取得する関数
+  Future<void> getLocation() async {
+    myLocation = await _locationService.getLocation();
+  }
+
   @override
   void initState() {
     super.initState();
+    getLocation();
+    _locationService.onLocationChanged.listen((LocationData location) async {
+      setState(() {
+        myLocation = location;
+        myLocationCircle = Circle(
+          circleId: const CircleId('MyLocation-Circle'),
+          center: LatLng(location.latitude!, location.longitude!),
+          radius: 1000,
+          fillColor: Colors.blue.withOpacity(0.2),
+          strokeColor: Colors.transparent,
+        );
+      });
+    });
   }
 
   @override
@@ -97,6 +127,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   initialCameraPosition: _initPosition,
                   markers:
                       allMarkers, // markersGeneratedFromFireとlocalMarkerを含めたマーカー群
+                  circles: {myLocationCircle},
                   minMaxZoomPreference: _miMinMaxZoomPreference,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: true,
@@ -105,7 +136,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                   },
                   // Tapで地図上にマーカーを立てる
                   onTap: (latLng) {
-                    try {
+                    if (myLocation == null) {
+                      throw '現在地を有効にしてください';
+                    }
+                    final lat1 = myLocation!.latitude;
+                    final lon1 = myLocation!.longitude;
+                    final lat2 = latLng.latitude;
+                    final lon2 = latLng.longitude;
+                    final isCreatable =
+                        shouldCreateByTwoPoint(lat1!, lon1!, lat2, lon2);
+
+                    if (isCreatable) {
+                      print('範囲内');
                       final geoFirePoint = geoFire.point(
                           latitude: latLng.latitude,
                           longitude: latLng.longitude);
@@ -116,18 +158,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                       );
                       localMarker = tapMarker;
                       setState(() {});
-                      // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
-                      // ref
-                      //     .watch(geoFirePointProvider.notifier)
-                      //     .update((state) => geoFirePoint);
-                    } catch (error) {
-                      final snackBar = SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                            '読み込みがうまくいきませんでした。もう一度お試しください\n${error.toString()}'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } finally {}
+                    } else {
+                      openDialog(context);
+                      setState(() {
+                        localMarker = null;
+                      });
+                    }
+
+                    // TODO(odaken): 本当にgeoFirePointProviderを使用するべきか検討する
+                    // ref
+                    //     .watch(geoFirePointProvider.notifier)
+                    //     .update((state) => geoFirePoint);
                   },
                   // LongPressで地図上のローカルマーカーを消す
                   // ダイヤログに変えても良いと思う
@@ -201,6 +242,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
+
 // 引数からUint8List型でCancvasをリターンする関数
 // Future<Uint8List> getBytesFromCanvas(int width, int height) async {
 //   final pictureRecorder = ui.PictureRecorder();
@@ -234,3 +276,5 @@ class _HomePageState extends ConsumerState<HomePage> {
 //   final data = await img.toByteData(format: ui.ImageByteFormat.png);
 //   return data!.buffer.asUint8List();
 // }
+
+

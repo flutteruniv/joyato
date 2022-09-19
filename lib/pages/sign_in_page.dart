@@ -34,7 +34,8 @@ class SignInPage extends ConsumerWidget {
                 },
               ),
             );
-            await determinePosition();
+            await locationServiceEnabledCheck();
+            await permissionCheck();
             await authRepository.signInWithGoogle();
             await accountRepository.storeAccountData();
             navigator.pop();
