@@ -10,7 +10,7 @@ import 'domain/post.dart';
 typedef JsonMap = Post;
 
 const allJsonConverters = <JsonConverter<dynamic, dynamic>>[
-  documentReferenceConverter,
+  //documentReferenceConverter,
   timestampConverter,
   colorConverter,
 ];
@@ -29,12 +29,12 @@ class PassthroughConverter<T> implements JsonConverter<T, T> {
   T toJson(T object) => object;
 }
 
-const documentReferenceConverter = DocumentReferenceConverter();
+// const documentReferenceConverter = DocumentReferenceConverter();
 
-class DocumentReferenceConverter
-    extends PassthroughConverter<DocumentReference<JsonMap>> {
-  const DocumentReferenceConverter();
-}
+// class DocumentReferenceConverter
+//     extends PassthroughConverter<DocumentReference<JsonMap>> {
+//   const DocumentReferenceConverter();
+// }
 
 const timestampConverter = TimestampConverter();
 

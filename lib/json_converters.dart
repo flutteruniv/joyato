@@ -1,6 +1,7 @@
 /// 参考：
 /// https://github.com/mono0926/flutter_firestore_ref
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'bool.dart';
@@ -15,17 +16,16 @@ class PassthroughConverter<T> implements JsonConverter<T, Object?> {
   Object? toJson(T object) => object;
 }
 
-// class DocumentReferenceConverter<T>
-//     implements JsonConverter<DocumentReference<T>, DocumentReference<Object?>> {
-//   const DocumentReferenceConverter();
-//
-//   @override
-//   DocumentReference<T> fromJson(DocumentReference<Object?> ref) =>
-//       ref as DocumentReference<T>;
-//
-//   @override
-//   DocumentReference<Object?> toJson(DocumentReference<T> ref) => ref;
-// }
+class DocumentReferenceConverter
+    implements JsonConverter<DocumentReference, DocumentReference> {
+  const DocumentReferenceConverter();
+
+  @override
+  DocumentReference fromJson(DocumentReference reference) => reference;
+
+  @override
+  DocumentReference toJson(DocumentReference reference) => reference;
+}
 
 class NullableDocumentReferenceConverter<T>
     implements
@@ -51,15 +51,27 @@ class GeoPointConverter implements JsonConverter<GeoPoint, GeoPoint> {
 }
 
 class GeoFirePointConverter
-    implements JsonConverter<Map<String, Object>, Map<String, Object>> {
+    implements JsonConverter<GeoFirePoint, Map<String, Object>> {
   const GeoFirePointConverter();
 
   @override
-  Map<String, Object> fromJson(Map<String, Object> geofirepoint) =>
-      geofirepoint;
+  GeoFirePoint fromJson(Map<String, Object> json) {
+    final geoPoint = json['geopoint'] as GeoPoint;
+    final geoFire = Geoflutterfire();
+
+    final geoFirePoint = geoFire.point(
+        latitude: geoPoint.latitude, longitude: geoPoint.longitude);
+    return geoFirePoint;
+  }
 
   @override
-  Map<String, Object> toJson(Map<String, Object> geofirepoint) => geofirepoint;
+  Map<String, Object> toJson(GeoFirePoint geofirepoint) {
+    final geoPoint = geofirepoint.geoPoint;
+    return {
+      'geohash': geofirepoint.hash,
+      'geopoint': geoPoint,
+    };
+  }
 }
 
 /// Firestore ドキュメントには FieldValue.serverTimestamp() を、

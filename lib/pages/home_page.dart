@@ -9,8 +9,10 @@ import 'package:location/location.dart';
 
 import '../auth/auth.dart';
 import '../calculate.dart';
+import '../domain/post.dart';
 import '../storage/post_storage.dart';
 import '../widget/alert_dialog.dart';
+import 'display_page.dart';
 import 'post_page.dart';
 import 'sign_in_page.dart';
 
@@ -55,16 +57,28 @@ class _HomePageState extends ConsumerState<HomePage> {
   final Location _locationService = Location();
 
   /// 現在地情報
-  LocationData? myLocation;
+  LocationData myLocation = LocationData.fromMap({
+    'latitude': 39.0,
+    'longitude': 135.0,
+  });
 
   /// 現在地を取得する関数
   Future<void> getLocation() async {
     myLocation = await _locationService.getLocation();
   }
 
+  InfoWindow infoWindow = const InfoWindow();
+
+  void titleInputForInfoWindow({String title = ''}) {
+    infoWindow = InfoWindow(title: title);
+  }
+
   @override
   void initState() {
     super.initState();
+    // Future(() async {
+    //   myLocation = await _locationService.getLocation();
+    // });
     getLocation();
     _locationService.onLocationChanged.listen((LocationData location) async {
       setState(() {
@@ -99,14 +113,23 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             final postDocs = postValue.docs;
             for (var post in postDocs) {
+              final lat1 = myLocation.latitude;
+              final lon1 = myLocation.longitude;
               final geoPoint = post['position']['geopoint'] as GeoPoint;
-              final reference = post['documentReference'] as DocumentReference;
+              final reference = post['reference'] as DocumentReference;  
+              print("🛟${reference.runtimeType}");
               final geoFirePoint = geoFire.point(
                   latitude: geoPoint.latitude, longitude: geoPoint.longitude);
+              final isSeeable = shouldCreateByTwoPoint(
+                  lat1!, lon1!, geoPoint.latitude, geoPoint.longitude);
+              print('💚${post.data()}');
               final marker = Marker(
                 markerId: MarkerId(reference.id),
                 position: LatLng(geoPoint.latitude, geoPoint.longitude),
-                onTap: () => movePostPage(geoFirePoint),
+                infoWindow: infoWindow,
+                onTap: () => isSeeable
+                    ? movePostPage(geoFirePoint)
+                    : titleInputForInfoWindow(title: '近づくと投稿が確認できます'),
               );
               markersGeneratedFromFire.add(marker);
             }
@@ -135,11 +158,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   },
                   // Tapで地図上にマーカーを立てる
                   onTap: (latLng) {
-                    if (myLocation == null) {
-                      throw '現在地を有効にしてください';
-                    }
-                    final lat1 = myLocation!.latitude;
-                    final lon1 = myLocation!.longitude;
+                    // if (myLocation == null) {
+                    //   throw '現在地を有効にしてください';
+                    // }
+                    final lat1 = myLocation.latitude;
+                    final lon1 = myLocation.longitude;
                     final lat2 = latLng.latitude;
                     final lon2 = latLng.longitude;
                     final isCreatable =
@@ -246,6 +269,14 @@ class _HomePageState extends ConsumerState<HomePage> {
         localMarker = null;
       });
     }
+  }
+
+  /// [DisplayPage]に遷移する
+  void moveDisplayPage(Post post) async {
+    await Navigator.of(context).push(MaterialPageRoute<bool>(
+        builder: (context) => DisplayPage(
+              post: post,
+            )));
   }
 }
 

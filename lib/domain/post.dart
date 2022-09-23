@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../json_converter_helper.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 import '../json_converters.dart';
 
@@ -10,22 +10,32 @@ part 'post.g.dart';
 @freezed
 class Post with _$Post {
   // ignore: invalid_annotation_target
-  @allJsonConvertersSerializable
   factory Post({
     required String title,
     required String body,
     required String name,
     @Default('') photoURL,
     required String uid,
-    required DocumentReference<JsonMap> documentReference,
+    @DocumentReferenceConverter() DocumentReference? reference,
     @AutoTimestampConverter() DateTime? createdAt,
-    @GeoFirePointConverter() Map<String, Object>? position,
+    @GeoFirePointConverter() GeoFirePoint? position,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   factory Post.fromDocumentSnapshot(DocumentSnapshot ds) {
-    final data = ds.data()! as Map<String, dynamic>;
+    final data = Map<String, dynamic>.from(ds.data()! as Map);
+    print(data.runtimeType);
+    final position = data['position'];
+    print(position.runtimeType);
+   final  positionData =  Map<String, dynamic>.from(position as Map);
+   print(positionData.runtimeType);
+   data['position'] = positionData;
+    return Post.fromJson(data);
+  }
+
+  factory Post.fromCollectionSnapshot(CollectionReference cr) {
+    final data = cr.doc() as Map<String, dynamic>;
     return Post.fromJson(data);
   }
 }
