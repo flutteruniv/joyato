@@ -31,7 +31,8 @@ mixin _$Post {
   @AutoTimestampConverter()
   DateTime? get createdAt => throw _privateConstructorUsedError;
   @GeoFirePointConverter()
-  GeoFirePoint? get position => throw _privateConstructorUsedError;
+  GeoPoint get position => throw _privateConstructorUsedError;
+  String get geoHash => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -50,7 +51,8 @@ abstract class $PostCopyWith<$Res> {
       String uid,
       @DocumentReferenceConverter() DocumentReference<Object?>? reference,
       @AutoTimestampConverter() DateTime? createdAt,
-      @GeoFirePointConverter() GeoFirePoint? position});
+      @GeoFirePointConverter() GeoPoint position,
+      String geoHash});
 }
 
 /// @nodoc
@@ -71,6 +73,7 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
     Object? reference = freezed,
     Object? createdAt = freezed,
     Object? position = freezed,
+    Object? geoHash = freezed,
   }) {
     return _then(_value.copyWith(
       title: title == freezed
@@ -104,7 +107,11 @@ class _$PostCopyWithImpl<$Res> implements $PostCopyWith<$Res> {
       position: position == freezed
           ? _value.position
           : position // ignore: cast_nullable_to_non_nullable
-              as GeoFirePoint?,
+              as GeoPoint,
+      geoHash: geoHash == freezed
+          ? _value.geoHash
+          : geoHash // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -122,7 +129,8 @@ abstract class _$$_PostCopyWith<$Res> implements $PostCopyWith<$Res> {
       String uid,
       @DocumentReferenceConverter() DocumentReference<Object?>? reference,
       @AutoTimestampConverter() DateTime? createdAt,
-      @GeoFirePointConverter() GeoFirePoint? position});
+      @GeoFirePointConverter() GeoPoint position,
+      String geoHash});
 }
 
 /// @nodoc
@@ -144,6 +152,7 @@ class __$$_PostCopyWithImpl<$Res> extends _$PostCopyWithImpl<$Res>
     Object? reference = freezed,
     Object? createdAt = freezed,
     Object? position = freezed,
+    Object? geoHash = freezed,
   }) {
     return _then(_$_Post(
       title: title == freezed
@@ -174,7 +183,11 @@ class __$$_PostCopyWithImpl<$Res> extends _$PostCopyWithImpl<$Res>
       position: position == freezed
           ? _value.position
           : position // ignore: cast_nullable_to_non_nullable
-              as GeoFirePoint?,
+              as GeoPoint,
+      geoHash: geoHash == freezed
+          ? _value.geoHash
+          : geoHash // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -190,7 +203,8 @@ class _$_Post implements _Post {
       required this.uid,
       @DocumentReferenceConverter() this.reference,
       @AutoTimestampConverter() this.createdAt,
-      @GeoFirePointConverter() this.position});
+      @GeoFirePointConverter() required this.position,
+      required this.geoHash});
 
   factory _$_Post.fromJson(Map<String, dynamic> json) => _$$_PostFromJson(json);
 
@@ -213,11 +227,13 @@ class _$_Post implements _Post {
   final DateTime? createdAt;
   @override
   @GeoFirePointConverter()
-  final GeoFirePoint? position;
+  final GeoPoint position;
+  @override
+  final String geoHash;
 
   @override
   String toString() {
-    return 'Post(title: $title, body: $body, name: $name, photoURL: $photoURL, uid: $uid, reference: $reference, createdAt: $createdAt, position: $position)';
+    return 'Post(title: $title, body: $body, name: $name, photoURL: $photoURL, uid: $uid, reference: $reference, createdAt: $createdAt, position: $position, geoHash: $geoHash)';
   }
 
   @override
@@ -232,7 +248,8 @@ class _$_Post implements _Post {
             const DeepCollectionEquality().equals(other.uid, uid) &&
             const DeepCollectionEquality().equals(other.reference, reference) &&
             const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
-            const DeepCollectionEquality().equals(other.position, position));
+            const DeepCollectionEquality().equals(other.position, position) &&
+            const DeepCollectionEquality().equals(other.geoHash, geoHash));
   }
 
   @JsonKey(ignore: true)
@@ -246,7 +263,8 @@ class _$_Post implements _Post {
       const DeepCollectionEquality().hash(uid),
       const DeepCollectionEquality().hash(reference),
       const DeepCollectionEquality().hash(createdAt),
-      const DeepCollectionEquality().hash(position));
+      const DeepCollectionEquality().hash(position),
+      const DeepCollectionEquality().hash(geoHash));
 
   @JsonKey(ignore: true)
   @override
@@ -270,7 +288,8 @@ abstract class _Post implements Post {
       required final String uid,
       @DocumentReferenceConverter() final DocumentReference<Object?>? reference,
       @AutoTimestampConverter() final DateTime? createdAt,
-      @GeoFirePointConverter() final GeoFirePoint? position}) = _$_Post;
+      @GeoFirePointConverter() required final GeoPoint position,
+      required final String geoHash}) = _$_Post;
 
   factory _Post.fromJson(Map<String, dynamic> json) = _$_Post.fromJson;
 
@@ -292,7 +311,9 @@ abstract class _Post implements Post {
   DateTime? get createdAt;
   @override
   @GeoFirePointConverter()
-  GeoFirePoint? get position;
+  GeoPoint get position;
+  @override
+  String get geoHash;
   @override
   @JsonKey(ignore: true)
   _$$_PostCopyWith<_$_Post> get copyWith => throw _privateConstructorUsedError;

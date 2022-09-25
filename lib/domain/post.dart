@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 
 import '../json_converters.dart';
 
@@ -18,19 +17,14 @@ class Post with _$Post {
     required String uid,
     @DocumentReferenceConverter() DocumentReference? reference,
     @AutoTimestampConverter() DateTime? createdAt,
-    @GeoFirePointConverter() GeoFirePoint? position,
+    @GeoFirePointConverter() required GeoPoint position,
+    required String geoHash,
   }) = _Post;
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
   factory Post.fromDocumentSnapshot(DocumentSnapshot ds) {
     final data = Map<String, dynamic>.from(ds.data()! as Map);
-    print(data.runtimeType);
-    final position = data['position'];
-    print(position.runtimeType);
-   final  positionData =  Map<String, dynamic>.from(position as Map);
-   print(positionData.runtimeType);
-   data['position'] = positionData;
     return Post.fromJson(data);
   }
 

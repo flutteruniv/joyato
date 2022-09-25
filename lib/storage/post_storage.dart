@@ -109,7 +109,8 @@ class PostRepository {
       name: user!.displayName ?? '',
       uid: user!.uid,
       createdAt: null,
-      position: geoFirePoint.data,
+      position: geoFirePoint.geoPoint,
+      geoHash: geoFirePoint.hash,
       reference: docRef,
     );
     await docRef.set(post);

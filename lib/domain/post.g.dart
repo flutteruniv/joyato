@@ -16,8 +16,9 @@ _$_Post _$$_PostFromJson(Map<String, dynamic> json) => _$_Post(
               DocumentReference<Object?>>(
           json['reference'], const DocumentReferenceConverter().fromJson),
       createdAt: const AutoTimestampConverter().fromJson(json['createdAt']),
-      position: _$JsonConverterFromJson<Map<String, Object>, GeoFirePoint>(
-          json['position'], const GeoFirePointConverter().fromJson),
+      position:
+          const GeoFirePointConverter().fromJson(json['position'] as GeoPoint),
+      geoHash: json['geoHash'] as String,
     );
 
 Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
@@ -30,8 +31,8 @@ Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
               DocumentReference<Object?>>(
           instance.reference, const DocumentReferenceConverter().toJson),
       'createdAt': const AutoTimestampConverter().toJson(instance.createdAt),
-      'position': _$JsonConverterToJson<Map<String, Object>, GeoFirePoint>(
-          instance.position, const GeoFirePointConverter().toJson),
+      'position': const GeoFirePointConverter().toJson(instance.position),
+      'geoHash': instance.geoHash,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

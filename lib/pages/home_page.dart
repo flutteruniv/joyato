@@ -115,9 +115,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             for (var post in postDocs) {
               final lat1 = myLocation.latitude;
               final lon1 = myLocation.longitude;
-              final geoPoint = post['position']['geopoint'] as GeoPoint;
-              final reference = post['reference'] as DocumentReference;  
-              print("🛟${reference.runtimeType}");
+              final geoPoint = post['position'] as GeoPoint;
+              final reference = post['reference'] as DocumentReference;
+              print('🛟${reference.runtimeType}');
               final geoFirePoint = geoFire.point(
                   latitude: geoPoint.latitude, longitude: geoPoint.longitude);
               final isSeeable = shouldCreateByTwoPoint(
