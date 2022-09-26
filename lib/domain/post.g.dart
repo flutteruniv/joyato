@@ -6,34 +6,33 @@ part of 'post.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-// ignore: non_constant_identifier_names
 _$_Post _$$_PostFromJson(Map<String, dynamic> json) => _$_Post(
       title: json['title'] as String,
       body: json['body'] as String,
       name: json['name'] as String,
       photoURL: json['photoURL'] ?? '',
       uid: json['uid'] as String,
-      documentReference: const DocumentReferenceConverter()
-          .fromJson(json['documentReference'] as DocumentReference<Post>),
+      reference: _$JsonConverterFromJson<DocumentReference<Object?>,
+              DocumentReference<Object?>>(
+          json['reference'], const DocumentReferenceConverter().fromJson),
       createdAt: const AutoTimestampConverter().fromJson(json['createdAt']),
       position:
-          _$JsonConverterFromJson<Map<String, Object>, Map<String, Object>>(
-              json['position'], const GeoFirePointConverter().fromJson),
+          const GeoFirePointConverter().fromJson(json['position'] as GeoPoint),
+      geoHash: json['geoHash'] as String,
     );
 
-// ignore: non_constant_identifier_names
 Map<String, dynamic> _$$_PostToJson(_$_Post instance) => <String, dynamic>{
       'title': instance.title,
       'body': instance.body,
       'name': instance.name,
       'photoURL': instance.photoURL,
       'uid': instance.uid,
-      'documentReference':
-          const DocumentReferenceConverter().toJson(instance.documentReference),
+      'reference': _$JsonConverterToJson<DocumentReference<Object?>,
+              DocumentReference<Object?>>(
+          instance.reference, const DocumentReferenceConverter().toJson),
       'createdAt': const AutoTimestampConverter().toJson(instance.createdAt),
-      'position':
-          _$JsonConverterToJson<Map<String, Object>, Map<String, Object>>(
-              instance.position, const GeoFirePointConverter().toJson),
+      'position': const GeoFirePointConverter().toJson(instance.position),
+      'geoHash': instance.geoHash,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

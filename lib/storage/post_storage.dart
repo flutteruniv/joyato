@@ -34,6 +34,19 @@ final postStreamProvider = StreamProvider<QuerySnapshot<Post>>((ref) {
       .snapshots();
 });
 
+/// PostsコレクションのSnapShotを提供する StreamProvider
+// final postDocFamily =
+//     FutureProvider.family<DocumentSnapshot<Post>, String>((ref, referenceId) {
+//   return ref
+//       .read(firestoreProvider)
+//       .collection(posts)
+//       .doc(referenceId)
+//       .withConverter<Post>(
+//           fromFirestore: (ds, _) => Post.fromDocumentSnapshot(ds),
+//           toFirestore: (post, _) => post.toJson())
+//       .get();
+// });
+
 /// GeoFirePointを提供する StateProvider
 final geoFirePointProvider = StateProvider.autoDispose<GeoFirePoint?>((ref) {
   GeoFirePoint? geoFirePoint;
@@ -82,12 +95,13 @@ class PostRepository {
   Future<void> storePinToPostCorrection(GeoFirePoint geoFirePoint) async {
     final title = titleController.text;
     final body = bodyController.text;
-    final postDocRef = postsConverter;
-    final reference = postDocRef.doc();
+    final postCollectionRef = postsConverter;
+    final docRef = postCollectionRef.doc();
 
     if (user == null) {
       throw 'ログインしていません';
     }
+    print('🚅$docRef');
 
     final post = Post(
       title: title,
@@ -95,10 +109,11 @@ class PostRepository {
       name: user!.displayName ?? '',
       uid: user!.uid,
       createdAt: null,
-      position: geoFirePoint.data,
-      documentReference: reference,
+      position: geoFirePoint.geoPoint,
+      geoHash: geoFirePoint.hash,
+      reference: docRef,
     );
-    await reference.set(post);
+    await docRef.set(post);
     initializeTextEditingController();
   }
 
