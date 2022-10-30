@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   /// zoomレベルの最小値・最大値
   static const _maxZoomLevel = 18.0;
-  static const _minZoomLevel = 6.0;
+  static const _minZoomLevel = 4.0;
   static const _miMinMaxZoomPreference = MinMaxZoomPreference(
     _minZoomLevel,
     _maxZoomLevel,
@@ -61,17 +63,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     'latitude': 39.0,
     'longitude': 135.0,
   });
+  Uint8List? markerIcon;
 
   /// 現在地を取得する関数
   Future<void> getLocation() async {
     myLocation = await _locationService.getLocation();
+    markerIcon = await getBytesFromCanvas(50, 50);
   }
 
   InfoWindow infoWindow = const InfoWindow();
-
-  void titleInputForInfoWindow({String title = ''}) {
-    infoWindow = InfoWindow(title: title);
-  }
 
   @override
   void initState() {
@@ -117,19 +117,19 @@ class _HomePageState extends ConsumerState<HomePage> {
               final lon1 = myLocation.longitude;
               final geoPoint = post['position'] as GeoPoint;
               final reference = post['reference'] as DocumentReference;
-              print('🛟${reference.runtimeType}');
-              final geoFirePoint = geoFire.point(
-                  latitude: geoPoint.latitude, longitude: geoPoint.longitude);
               final isSeeable = shouldCreateByTwoPoint(
                   lat1!, lon1!, geoPoint.latitude, geoPoint.longitude);
-              print('💚${post.data()}');
+
               final marker = Marker(
                 markerId: MarkerId(reference.id),
                 position: LatLng(geoPoint.latitude, geoPoint.longitude),
-                infoWindow: infoWindow,
-                onTap: () => isSeeable
-                    ? movePostPage(geoFirePoint)
-                    : titleInputForInfoWindow(title: '近づくと投稿が確認できます'),
+                infoWindow: isSeeable
+                    ? const InfoWindow()
+                    : const InfoWindow(title: '近づくと投稿が確認できます'),
+                onTap: () => isSeeable ? moveDisplayPage(post.data()) : null,
+                icon: markerIcon != null
+                    ? BitmapDescriptor.fromBytes(markerIcon!)
+                    : BitmapDescriptor.defaultMarker,
               );
               markersGeneratedFromFire.add(marker);
             }
@@ -273,46 +273,58 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   /// [DisplayPage]に遷移する
   void moveDisplayPage(Post post) async {
+    infoWindow = const InfoWindow();
     await Navigator.of(context).push(MaterialPageRoute<bool>(
         builder: (context) => DisplayPage(
               post: post,
             )));
   }
+
+// CanvasMarkerを作成する関数
+  Future<void> canvasMarkerCreate(LatLng latLng) async {
+    // 初期のCanvasサイズを指定
+    final markerIcon = await getBytesFromCanvas(100, 100);
+
+    final tapMarker = Marker(
+      markerId: MarkerId(latLng.toString()), // IDにはlatLngを使用する
+      icon: BitmapDescriptor.fromBytes(markerIcon),
+      position: latLng,
+    );
+    localMarker = tapMarker;
+    setState(() {});
+  }
+
+  /// 引数からUint8List型でCancvasをリターンする関数
+  Future<Uint8List> getBytesFromCanvas(int width, int height) async {
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+    final paint = Paint()..color = Colors.yellow;
+    const radius = Radius.circular(30.0);
+    const text = '';
+    const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
+
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius,
+        ),
+        paint);
+
+    final painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = const TextSpan(
+      text: text,
+      style: textStyle,
+    );
+    painter.layout();
+    painter.paint(
+        canvas,
+        Offset((width * 0.5) - painter.width * 0.5,
+            (height * 0.5) - painter.height * 0.5));
+    final img = await pictureRecorder.endRecording().toImage(width, height);
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data!.buffer.asUint8List();
+  }
 }
-
-
-// 引数からUint8List型でCancvasをリターンする関数
-// Future<Uint8List> getBytesFromCanvas(int width, int height) async {
-//   final pictureRecorder = ui.PictureRecorder();
-//   final canvas = Canvas(pictureRecorder);
-//   final paint = Paint()..color = Colors.red;
-//   const radius = Radius.circular(30.0);
-//   const text = 'P';
-//   const textStyle = TextStyle(fontSize: 25.0, color: Colors.white);
-
-//   canvas.drawRRect(
-//       RRect.fromRectAndCorners(
-//         Rect.fromLTWH(0.0, 0.0, width.toDouble(), height.toDouble()),
-//         topLeft: radius,
-//         topRight: radius,
-//         bottomLeft: radius,
-//         bottomRight: radius,
-//       ),
-//       paint);
-
-//   final painter = TextPainter(textDirection: TextDirection.ltr);
-//   painter.text = const TextSpan(
-//     text: text,
-//     style: textStyle,
-//   );
-//   painter.layout();
-//   painter.paint(
-//       canvas,
-//       Offset((width * 0.5) - painter.width * 0.5,
-//           (height * 0.5) - painter.height * 0.5));
-//   final img = await pictureRecorder.endRecording().toImage(width, height);
-//   final data = await img.toByteData(format: ui.ImageByteFormat.png);
-//   return data!.buffer.asUint8List();
-// }
-
-
