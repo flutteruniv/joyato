@@ -62,7 +62,8 @@ class PostPage extends ConsumerWidget {
                           isLoading = false;
                         }
                       },
-                      child: const Text('投稿する'))
+                      child: const Text('投稿する')),
+                      
                 ],
               ),
             ),

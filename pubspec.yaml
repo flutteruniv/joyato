@@ -23,6 +23,8 @@ dependencies:
   freezed_annotation: ^2.1.0
   cloud_firestore: ^3.4.4
   location: ^4.4.0
+  lottie: ^1.4.3
+  flutter_hooks: ^0.18.5+1
   geoflutterfire:
     git:
       url: https://github.com/samuraituru/GeoFlutterFire.git
@@ -43,6 +45,7 @@ flutter:
   assets:
     - assets/images/
     - assets/json/
+    - assets/lotties/
 
 flutter_icons:
   android: true
