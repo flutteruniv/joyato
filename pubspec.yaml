@@ -17,7 +17,12 @@ dependencies:
   firebase_core: ^1.20.0
   firebase_analytics: ^9.3.0
   firebase_auth: ^3.6.1
+  cloud_firestore: ^3.4.6
   google_sign_in: ^5.4.0
+  google_fonts: ^3.0.1
+  
+  
+  
   
 
 dev_dependencies:
@@ -35,6 +40,8 @@ flutter:
 
 assets:
   - assets/images
+  
+  
 
 
 flutter_icons:
