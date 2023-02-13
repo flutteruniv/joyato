@@ -1,16 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:joyato/SignIn_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import 'SignIn_page.dart';
+
+class SigninOutPage extends StatefulWidget {
+  const SigninOutPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SigninOutPage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<SigninOutPage> {
   Future<void> singOut() async {
     await GoogleSignIn().signOut();
     await FirebaseAuth.instance.signOut();
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ホームページ'),
+        title: const Text('サインアウト'),
       ),
       body: Center(
         child: ElevatedButton(

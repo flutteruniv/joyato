@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:joyato/map_page.dart';
+import 'package:joyato/register_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -33,189 +36,285 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowMaterialGrid: false,
       home: Scaffold(
-        backgroundColor: const Color(0xFF15202b),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Container(
-              height: 800,
-              alignment: Alignment.center,
-              child: Column(
+        backgroundColor: const Color(0xFF101010),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 700,
+                width: 500,
+                child: Image.asset('assets/images/タイトル.png'),
+              ),
+              const SizedBox(
+                height: 0,
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 74,
+                    width: 172,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0xFFF8DBAA),
+                        ),
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              alignment: Alignment.center,
+                              height: 780,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF101010),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20, left: 15),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: const Icon(
+                                            Icons.clear_outlined,
+                                            color: Colors.white,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    'ログイン',
+                                    style: GoogleFonts.zenMaruGothic(
+                                      fontSize: 22,
+                                      color: const Color(0xFFFFFFFF),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+                                  SizedBox(
+                                    width: 327,
+                                    height: 53,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'メールアドレス',
+                                        hintStyle: GoogleFonts.zenMaruGothic(
+                                          fontSize: 14,
+                                          color: const Color(0xFF424347),
+                                        ),
+                                        filled: true,
+                                        fillColor: const Color(0xFF1F2123),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        border: InputBorder.none,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      cursorColor: const Color(0xFFF8DBAA),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  SizedBox(
+                                    width: 327,
+                                    height: 53,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'パスワード',
+                                        hintStyle: GoogleFonts.zenMaruGothic(
+                                            fontSize: 14,
+                                            color: const Color(0xFF424347)),
+                                        filled: true,
+                                        fillColor: const Color(0xFF1F2123),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        border: InputBorder.none,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      cursorColor: const Color(0xFFF8DBAA),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 50),
+                                  SizedBox(
+                                    width: 327,
+                                    height: 53,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFF8DBAA),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MapPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'ログイン',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(
+                                        height: 30.0,
+                                        width: 150,
+                                        child: Divider(
+                                          color: Color(0xFF424347),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      const Text(
+                                        'または',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color(0xFF424347),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      const SizedBox(
+                                        height: 30.0,
+                                        width: 150,
+                                        child: Divider(
+                                          color: Color(0xFF424347),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: 327,
+                                    height: 53,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFFFFFFF),
+                                      ),
+                                      onPressed: () {},
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            height: 30,
+                                            width: 50,
+                                            child: Image.network(
+                                                'https://flutter-ui.s3.us-east-2.amazonaws.com/social_media_buttons/google-icon.png'),
+                                          ),
+                                          const SizedBox(width: 30),
+                                          Text(
+                                            'Googleでサインイン',
+                                            style: GoogleFonts.zenMaruGothic(
+                                              fontSize: 15,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        'ログイン',
+                        style: GoogleFonts.zenMaruGothic(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
-                    height: 24,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'JoYaTo',
-                          style: TextStyle(
-                            fontSize: 45.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.yellow[200],
-                          ),
-                        ),
-                        Text(
-                          "-場所に思いを刻む SNS-",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            color: Colors.yellow[200],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 30.0,
-                          width: 150.0,
-                          child: Divider(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 350,
-                          child: TextFormField(
-                            style: const TextStyle(color: Colors.white),
-                            cursorColor: Colors.white,
-                            decoration: const InputDecoration(
-                              hintText: 'メールアドレス',
-                              hintStyle:
-                                  TextStyle(fontSize: 20, color: Colors.grey),
-                              fillColor: Colors.white12,
-                              filled: true,
-                              prefixIcon:
-                                  Icon(Icons.mail, color: Color(0xFF8c94b8)),
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        SizedBox(
-                          width: 350,
-                          child: TextFormField(
-                            style: const TextStyle(color: Colors.white),
-                            cursorColor: Colors.white,
-                            decoration: const InputDecoration(
-                              hintText: 'パスワード',
-                              hintStyle:
-                                  TextStyle(fontSize: 20, color: Colors.grey),
-                              fillColor: Colors.white12,
-                              filled: true,
-                              prefixIcon: Icon(
-                                Icons.key,
-                                color: Color(0xFF8c94b8),
-                              ),
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              child: SizedBox(
-                                width: 170,
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xFFfff59d),
-                                  child: Center(
-                                    child: Text(
-                                      'ログイン',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: SizedBox(
-                                width: 170,
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xFFfff59d),
-                                  child: Center(
-                                    child: Text(
-                                      '新規登録',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 30.0,
-                              width: 100,
-                              child: Divider(
-                                color: Colors.teal[100],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            const Text(
-                              'または',
-                              style: TextStyle(
-                                  fontSize: 15, color: Colors.white38),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            SizedBox(
-                              height: 30.0,
-                              width: 100,
-                              child: Divider(
-                                color: Colors.teal[100],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Googleアカウントでログイン',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.yellow[200],
-                          ),
-                        ),
-                      ],
-                    ),
+                    width: 20,
                   ),
                   SizedBox(
-                    height: 24,
+                    height: 74,
+                    width: 172,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0xFFF8DBAA),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'はじめる',
+                        style: GoogleFonts.zenMaruGothic(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
+              )
+            ],
           ),
         ),
       ),

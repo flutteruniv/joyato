@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
 
 
   cupertino_icons: ^1.0.2
@@ -20,6 +21,14 @@ dependencies:
   cloud_firestore: ^3.4.6
   google_sign_in: ^5.4.0
   google_fonts: ^3.0.1
+  font_awesome_flutter: ^10.2.1
+  circular_menu: ^2.0.1
+  
+
+  
+
+
+  
   
   
   
@@ -32,15 +41,18 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.9.3
+  
+
+  
 
 
 flutter:
+  assets:
+    - assets/images/
 
   uses-material-design: true
 
-assets:
-  - assets/images
-  
+
   
 
 

@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:joyato/Signin_page.dart';
-import 'package:joyato/home_page.dart';
+import 'package:joyato/SignIn_page.dart';
+import 'package:joyato/posts_page.dart';
+import 'package:joyato/profile_page.dart';
+import 'map_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,11 +20,11 @@ class MyApp extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       return const MaterialApp(
-        home: SignInPage(),
+        home: MapPage(),
       );
     }
     return const MaterialApp(
-      home: HomePage(),
+      home: MapPage(),
     );
   }
 }
